@@ -1,0 +1,28 @@
+<p>
+  <b>Name:</b>
+  <%=h @rule.name %>
+</p>
+
+<p>
+  <b>Rate:</b>
+  <%=h @rule.rate %>
+</p>
+
+<p>
+  <b>Medical scheme:</b>
+  <%=h @rule.medical_scheme_id %>
+</p>
+
+<p>
+  <b>Product:</b>
+  <%=h @rule.product_id %>
+</p>
+
+<p>
+  <b>Product type:</b>
+  <%=h @rule.product_type %>
+</p>
+
+
+<%= link_to 'Edit', edit_rule_path(@rule) %> |
+<%= link_to 'Back', rules_path %>

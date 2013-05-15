@@ -1,0 +1,38 @@
+<p>
+  <b>Account ID:</b>
+  <%=h @item.account_id %>
+</p>
+
+<p>
+  <b>Product:</b>
+  <%=h @item.product_id %>
+</p>
+
+<p>
+  <b>Product type:</b>
+  <%=h @item.product_type %>
+</p>
+
+<p>
+  <b>Original price:</b>
+  <%=h @item.original_price %>
+</p>
+
+<p>
+  <b>Final price:</b>
+  <%=h @item.final_price %>
+</p>
+
+<p>
+  <b>Is paid:</b>
+  <%=h @item.is_paid %>
+</p>
+
+<p>
+  <b>Rule:</b>
+  <%=h @item.rule_id %>
+</p>
+
+
+<%= link_to 'Edit', edit_item_path(@item) %> |
+<%= link_to 'Back', items_path %>

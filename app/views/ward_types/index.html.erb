@@ -1,0 +1,24 @@
+<h1>Listing ward_types</h1>
+
+<table>
+  <tr>
+    <th>Ward type</th>
+    <th>Daily price</th>
+    <th>Version</th>
+  </tr>
+
+<% @ward_types.each do |ward_type| %>
+  <tr>
+    <td><%=h ward_type.ward_type %></td>
+    <td><%=h ward_type.daily_price %></td>
+    <td><%=h ward_type.version %></td>
+    <td><%= link_to 'Show', ward_type %></td>
+    <td><%= link_to 'Edit', edit_ward_type_path(ward_type) %></td>
+    <td><%= link_to 'Destroy', ward_type, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New ward_type', new_ward_type_path %>

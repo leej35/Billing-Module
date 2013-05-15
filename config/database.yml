@@ -1,0 +1,26 @@
+production:
+   adapter: mysql2
+   database: openmrs_db_billing_v2
+   username: root
+   password: root
+   host: 127.0.0.1
+#   socket: '/Applications/MAMP/Library/bin/mysqld'
+
+development:
+   adapter: mysql2
+   database: openmrs_db_billing_v2
+   username: root
+   password: root
+   host: 127.0.0.1
+#   socket: '/Applications/MAMP/Library/bin/mysqld'
+
+test: &TEST
+   adapter: mysql2
+   database: openmrs_db_billing_v2
+   username: root
+   password: root
+   host: localhost
+   socket: '/Applications/MAMP/Library/bin/mysqld'
+
+cucumber:
+  <<: *TEST

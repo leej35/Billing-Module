@@ -1,0 +1,28 @@
+<p>
+  <b>Product:</b>
+  <%=h @admission.product_id %>
+</p>
+
+<p>
+  <b>Totalprice:</b>
+  <%=h @admission.totalprice %>
+</p>
+
+<p>
+  <b>Start date:</b>
+  <%=h @admission.start_date %>
+</p>
+
+<p>
+  <b>End date:</b>
+  <%=h @admission.end_date %>
+</p>
+
+<p>
+  <b>Ward type:</b>
+  <%=h @admission.ward_type %>
+</p>
+
+
+<%= link_to 'Edit', edit_admission_path(@admission) %> |
+<%= link_to 'Back', admissions_path %>

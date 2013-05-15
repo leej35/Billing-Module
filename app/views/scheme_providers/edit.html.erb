@@ -1,0 +1,16 @@
+<h1>Editing scheme_provider</h1>
+
+<% form_for(@scheme_provider) do |f| %>
+  <%= f.error_messages %>
+
+  <p>
+    <%= f.label :name %><br />
+    <%= f.text_field :name %>
+  </p>
+  <p>
+    <%= f.submit 'Update' %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', @scheme_provider %> |
+<%= link_to 'Back', scheme_providers_path %>

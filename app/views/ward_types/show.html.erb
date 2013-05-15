@@ -1,0 +1,18 @@
+<p>
+  <b>Ward type:</b>
+  <%=h @ward_type.ward_type %>
+</p>
+
+<p>
+  <b>Daily price:</b>
+  <%=h @ward_type.daily_price %>
+</p>
+
+<p>
+  <b>Version:</b>
+  <%=h @ward_type.version %>
+</p>
+
+
+<%= link_to 'Edit', edit_ward_type_path(@ward_type) %> |
+<%= link_to 'Back', ward_types_path %>

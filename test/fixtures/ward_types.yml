@@ -1,0 +1,11 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  ward_type: MyString
+  daily_price: 9.99
+  version: 
+
+two:
+  ward_type: MyString
+  daily_price: 9.99
+  version: 

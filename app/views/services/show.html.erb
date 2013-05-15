@@ -1,0 +1,33 @@
+<p>
+  <b>Product:</b>
+  <%=h @service.product_id %>
+</p>
+
+<p>
+  <b>Name:</b>
+  <%=h @service.name %>
+</p>
+
+<p>
+  <b>Price:</b>
+  <%=h @service.price %>
+</p>
+
+<p>
+  <b>Service type:</b>
+  <%=h @service.service_type %>
+</p>
+
+<p>
+  <b>Department:</b>
+  <%=h @service.department %>
+</p>
+
+<p>
+  <b>Version:</b>
+  <%=h @service.version %>
+</p>
+
+
+<%= link_to 'Edit', edit_service_path(@service) %> |
+<%= link_to 'Back', services_path %>

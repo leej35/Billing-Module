@@ -1,0 +1,2 @@
+module WardTypesHelper
+end

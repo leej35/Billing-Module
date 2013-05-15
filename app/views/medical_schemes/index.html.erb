@@ -1,0 +1,24 @@
+<h1>Listing medical_schemes</h1>
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Provider</th>
+    <th>Scheme type</th>
+  </tr>
+
+<% @medical_schemes.each do |medical_scheme| %>
+  <tr>
+    <td><%=h medical_scheme.name %></td>
+    <td><%=h medical_scheme.provider %></td>
+    <td><%=h medical_scheme.scheme_type %></td>
+    <td><%= link_to 'Show', medical_scheme %></td>
+    <td><%= link_to 'Edit', edit_medical_scheme_path(medical_scheme) %></td>
+    <td><%= link_to 'Destroy', medical_scheme, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New medical_scheme', new_medical_scheme_path %>

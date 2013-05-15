@@ -1,0 +1,15 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  product_id: MyString
+  totalprice: 9.99
+  start_date: 2013-05-09 08:56:00
+  end_date: 2013-05-09 08:56:00
+  ward_type: 9.99
+
+two:
+  product_id: MyString
+  totalprice: 9.99
+  start_date: 2013-05-09 08:56:00
+  end_date: 2013-05-09 08:56:00
+  ward_type: 9.99

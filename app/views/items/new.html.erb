@@ -1,0 +1,63 @@
+<h1>New item</h1>
+
+
+
+<% form_for(@item) do |f| %>
+  <%= f.error_messages %>
+  
+  
+  <%= f.hidden_field :account_id, :value => params[:account_id] %>
+  
+  <% if params[:type] == "service" %>  
+  <p>
+    Service:
+    <% services_array = Service.all.map { |service| [service.name, service.product_id] } %>
+    <%= options_for_select(services_array) %>
+    <%= f.select(:product_id, options_for_select(services_array)) %>
+  </p>
+  <% elsif params[:type] == "drug" %>
+  <p>
+    Drug:
+    <% drugitems_array = DrugItem.all.map { |drugitem| [drugitem.name, drugitem.product_id] } %>
+    <%= options_for_select(drugitems_array) %>
+    <%= f.select(:product_id, options_for_select(drugitems_array)) %>
+  </p>
+  <p>
+    <%= f.label :original_price %><br />
+    <%= f.text_field :original_price %>
+  </p>
+  <p>
+    <%= f.label :final_price %><br />
+    <%= f.text_field :final_price %>
+  </p>
+
+  <% elsif params[:type] == "admission" %>
+  <p>
+    Admission:
+    <% wards_types_array = Admission.all.map { |ward_type| [ward_type.ward_type, ward_type.id] } %>
+	<%= options_for_select(wards_types_array) %>
+	<%= f.select(:ward_type.id, options_for_select(wards_types_array)) %>
+  </p>
+   <p>
+    <%= f.label :original_price %><br />
+    <%= f.text_field :original_price %>
+  </p>
+  <p>
+    <%= f.label :final_price %><br />
+    <%= f.text_field :final_price %>
+  </p>
+  <% else %>
+  <p>
+    Wrong parameter for type of service!<br/>
+    You should clarify type of item and account id<br/>
+    <i>e.g, items/new?type=service&account_id=1</i>
+
+  </p>
+  <% end %>
+  
+  <p>
+    <%= f.submit 'Create' %>
+  </p>
+<% end %>
+
+<%= link_to 'Back', items_path %>

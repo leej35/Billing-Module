@@ -1,0 +1,20 @@
+<h1>Editing account_scheme</h1>
+
+<% form_for(@account_scheme) do |f| %>
+  <%= f.error_messages %>
+
+  <p>
+    <%= f.label :account_id %><br />
+    <%= f.text_field :account_id %>
+  </p>
+  <p>
+    <%= f.label :medical_scheme_id %><br />
+    <%= f.text_field :medical_scheme_id %>
+  </p>
+  <p>
+    <%= f.submit 'Update' %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', @account_scheme %> |
+<%= link_to 'Back', account_schemes_path %>

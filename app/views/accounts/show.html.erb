@@ -1,0 +1,30 @@
+<p>
+  <b>Patient:</b>
+  <%=h @account.patient_id %>
+</p>
+
+<p>
+  <b>Balance:</b>
+  <%=h @account.balance %>
+</p>
+<hr>
+
+<p>
+  <b>Add New Item</b><br/>
+  <%= link_to 'New Item: Service', :controller => "items", :action => "new", :account_id => @account.id, :type => "service" %><br/>
+  <%= link_to 'New Item: Drug', :controller => "items", :action => "new", :account_id => @account.id, :type => "drug" %><br/>
+  <%= link_to 'New Item: Admission', :controller => "items", :action => "new", :account_id => @account.id, :type => "admission" %><br/>
+</p>
+
+<hr>
+
+
+<p>
+  Add medical scheme <br/>
+  <%= link_to 'Add Medical Scheme', :controller => "account_schemes", :action => "new", :account_id => @account %>
+</p>
+
+
+<hr>
+<%= link_to 'Edit Account', edit_account_path(@account) %> |
+<%= link_to 'Back', accounts_path %>

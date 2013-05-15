@@ -1,0 +1,15 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  product_id: MyString
+  name: MyString
+  price: 9.99
+  drug_type: MyString
+  version: 
+
+two:
+  product_id: MyString
+  name: MyString
+  price: 9.99
+  drug_type: MyString
+  version: 

@@ -1,0 +1,22 @@
+<h1>Listing account_schemes</h1>
+
+<table>
+  <tr>
+    <th>Account</th>
+    <th>Medical scheme</th>
+  </tr>
+
+<% @account_schemes.each do |account_scheme| %>
+  <tr>
+    <td><%=h account_scheme.account_id %></td>
+    <td><%=h account_scheme.medical_scheme_id %></td>
+    <td><%= link_to 'Show', account_scheme %></td>
+    <td><%= link_to 'Edit', edit_account_scheme_path(account_scheme) %></td>
+    <td><%= link_to 'Destroy', account_scheme, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New account_scheme', new_account_scheme_path %>

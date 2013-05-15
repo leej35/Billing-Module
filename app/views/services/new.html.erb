@@ -1,0 +1,35 @@
+<h1>New service</h1>
+
+<% form_for(@service) do |f| %>
+  <%= f.error_messages %>
+
+  <p>
+    Service name<br />
+    <%= f.text_field :name %>
+  </p>
+  <p>
+    <%= f.label :price %><br />
+    <%= f.text_field :price %>
+  </p>
+  <p>
+    Price type<br />
+    <%  types_array = Type.all.map { |type| [type.name, type.name] } %>
+    <%= options_for_select(types_array) %>
+    <%= f.select(:service_type, options_for_select(types_array)) %>
+  </p>
+  <p>
+    <%= f.label :department %><br />
+    <%  departments_array = Department.all.map { |department| [department.name, department.name] } %>
+    <%= options_for_select(departments_array) %>
+    <%= f.select(:department, options_for_select(departments_array)) %>
+  </p>
+  <p>
+    <%= f.label :version %><br />
+    <%= f.text_field :version %>
+  </p>
+  <p>
+    <%= f.submit 'Create' %>
+  </p>
+<% end %>
+
+<%= link_to 'Back', services_path %>

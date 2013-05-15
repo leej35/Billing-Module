@@ -1,0 +1,10 @@
+class Rules < ActiveRecord::Migration
+  def self.up
+   create_table :rules do |t|
+     t.integer 
+
+  end
+
+  def self.down
+  end
+end

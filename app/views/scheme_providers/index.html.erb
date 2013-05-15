@@ -1,0 +1,20 @@
+<h1>Listing scheme_providers</h1>
+
+<table>
+  <tr>
+    <th>Name</th>
+  </tr>
+
+<% @scheme_providers.each do |scheme_provider| %>
+  <tr>
+    <td><%=h scheme_provider.name %></td>
+    <td><%= link_to 'Show', scheme_provider %></td>
+    <td><%= link_to 'Edit', edit_scheme_provider_path(scheme_provider) %></td>
+    <td><%= link_to 'Destroy', scheme_provider, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New scheme_provider', new_scheme_provider_path %>

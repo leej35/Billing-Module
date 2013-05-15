@@ -1,0 +1,52 @@
+<h1>New rule</h1>
+
+<% form_for(@rule) do |f| %>
+  <%= f.error_messages %>
+   
+  <%= f.hidden_field :medical_scheme_id, :value => params[:medical_scheme_id] %>
+
+  
+  <% if params[:type] == "service" %>  
+  <p>
+    Service:
+    <% services_array = Service.all.map { |service| [service.name, service.product_id] } %>
+    <%= options_for_select(services_array) %>
+    <%= f.select(:product_id, options_for_select(services_array)) %>
+  </p>
+
+  <% elsif params[:type] == "drug" %>
+  <p>
+    Drug:
+    <% drugitems_array = DrugItem.all.map { |drugitem| [drugitem.name, drugitem.product_id] } %>
+    <%= options_for_select(drugitems_array) %>
+    <%= f.select(:product_id, options_for_select(drugitems_array)) %>
+
+  </p>
+
+  <% elsif params[:type] == "admission" %>
+  <p>
+    Admission:
+    <% wardtypes_array = WardType.all.map { |ward_type| [ward_type.ward_type, ward_type.id] } %>
+	<%= options_for_select(wardtypes_array) %>
+	<%= f.select(:product_id, options_for_select(wardtypes_array)) %>
+  </p>
+  <% else %>
+  <p>
+    Wrong parameter for type of service!<br/>
+    <i>e.g, rules/new?type=service&medical_scheme_id=1</i>
+  </p>
+  <% end %>
+  <p>
+    Rule Name<br />
+    <%= f.text_field :name %>
+  </p>
+  <p>
+    Discount Rate<br />
+    <%= f.text_field :rate %>
+  </p>
+  <p>
+    <%= f.submit 'Create' %>
+  </p>
+<% end %>
+
+<%= link_to 'Back', rules_path %>

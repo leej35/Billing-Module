@@ -1,0 +1,13 @@
+<p>
+  <b>Account:</b>
+  <%=h @account_scheme.account_id %>
+</p>
+
+<p>
+  <b>Medical scheme:</b>
+  <%=h @account_scheme.medical_scheme_id %>
+</p>
+
+
+<%= link_to 'Edit', edit_account_scheme_path(@account_scheme) %> |
+<%= link_to 'Back', account_schemes_path %>

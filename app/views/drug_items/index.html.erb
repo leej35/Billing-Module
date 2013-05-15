@@ -1,0 +1,28 @@
+<h1>Listing drug_items</h1>
+
+<table>
+  <tr>
+    <th>Product</th>
+    <th>Name</th>
+    <th>Price</th>
+    <th>Drug type</th>
+    <th>Version</th>
+  </tr>
+
+<% @drug_items.each do |drug_item| %>
+  <tr>
+    <td><%=h drug_item.product_id %></td>
+    <td><%=h drug_item.name %></td>
+    <td><%=h drug_item.price %></td>
+    <td><%=h drug_item.drug_type %></td>
+    <td><%=h drug_item.version %></td>
+    <td><%= link_to 'Show', drug_item %></td>
+    <td><%= link_to 'Edit', edit_drug_item_path(drug_item) %></td>
+    <td><%= link_to 'Destroy', drug_item, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New drug_item', new_drug_item_path %>

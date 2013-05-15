@@ -1,0 +1,28 @@
+<p>
+  <b>Product:</b>
+  <%=h @drug_item.product_id %>
+</p>
+
+<p>
+  <b>Name:</b>
+  <%=h @drug_item.name %>
+</p>
+
+<p>
+  <b>Price:</b>
+  <%=h @drug_item.price %>
+</p>
+
+<p>
+  <b>Drug type:</b>
+  <%=h @drug_item.drug_type %>
+</p>
+
+<p>
+  <b>Version:</b>
+  <%=h @drug_item.version %>
+</p>
+
+
+<%= link_to 'Edit', edit_drug_item_path(@drug_item) %> |
+<%= link_to 'Back', drug_items_path %>

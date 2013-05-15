@@ -1,0 +1,19 @@
+<h1>New account_scheme</h1>
+
+<% form_for(@account_scheme) do |f| %>
+  <%= f.error_messages %>
+    <%= f.hidden_field :account_id, :value => params[:account_id] %>
+
+  <p>
+    <%= f.label :medical_scheme_id %><br />
+    <% schemes_array = MedicalScheme.all.map { |scheme| [scheme.name, scheme.id] } %>
+    <%= options_for_select(schemes_array) %>
+    <%= f.select(:medical_scheme_id, options_for_select(schemes_array)) %>
+
+  </p>
+  <p>
+    <%= f.submit 'Create' %>
+  </p>
+<% end %>
+
+<%= link_to 'Back', account_schemes_path %>

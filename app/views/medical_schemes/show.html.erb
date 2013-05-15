@@ -1,0 +1,35 @@
+<p>
+  <b>Name:</b>
+  <%=h @medical_scheme.name %>
+</p>
+
+<p>
+  <b>Provider:</b>
+  <%=h @medical_scheme.provider %>
+</p>
+
+<p>
+  <b>Scheme type:</b>
+  <%=h @medical_scheme.scheme_type %>
+</p>
+
+<p>
+  <b>Rules:</b><br/>
+  <% @rules.each do |rule| %>
+  <%= rule.name %>
+  <%= link_to 'Edit', edit_rule_path(rule) %>
+  <%= link_to 'Destroy', rule, :confirm => 'Are you sure?', :method => :delete %><br/>
+  <% end %>  
+</p>
+
+
+<p>
+  <b>New Rule </b><br/>
+  <%= link_to 'New Rule: Service', :controller => "rules", :action => "new", :medical_scheme_id => @medical_scheme.id, :type => "service" %><br/>
+  <%= link_to 'New Rule: Drug', :controller => "rules", :action => "new", :medical_scheme_id => @medical_scheme.id, :type => "drug" %><br/>
+  <%= link_to 'New Rule: Admission', :controller => "rules", :action => "new", :medical_scheme_id => @medical_scheme.id, :type => "admission" %><br/>
+</p>
+
+
+<%= link_to 'Edit', edit_medical_scheme_path(@medical_scheme) %> |
+<%= link_to 'Back', medical_schemes_path %>
