@@ -14,16 +14,21 @@ class AccountsController < ApplicationController
   # GET /accounts/1.xml
   def show
     @account = Account.find(params[:id])
-    
-    @account_schemes = AccountScheme.find_all_by_account_id(@account.id)
+
+  
+	scheme_ids = AccountScheme.find_all_by_account_id(@account.id).map { |account_scheme| [account_scheme.medical_scheme_id]}      
+    @schemes_array = MedicalScheme.find(scheme_ids)
+
+	#     @medical_schemes = MedicalScheme.find_all_by_id(account_schemes.medical_scheme_id)
+
+# #     
+#     account_schemes = []
+#     raise @medical_schemes.to_yaml
+# 
 #     
-    account_schemes = []
-    @medical_schemes = []
-#     
-    @account_schemes.each do |account_scheme|
-      @account_schemes << account_scheme
-      @medical_schemes << MedicalScheme.find_all_by_id(account_scheme.medical_scheme_id)
-    end
+#     @account_schemes.each do |account_scheme|
+#       @account_schemes << account_scheme
+#     end
 #  	
 #  	medical_schemes = []
 # 
@@ -31,7 +36,6 @@ class AccountsController < ApplicationController
 #       medical_schemes << account_scheme.medical_schemes
 #     end
 # 
-#     raise @medical_schemes.to_yaml
     
     
     

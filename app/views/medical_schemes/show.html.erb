@@ -17,7 +17,8 @@
   <b>Rules:</b><br/>
   <% @rules.each do |rule| %>
   <%= rule.name %>
-  <%= link_to 'Edit', edit_rule_path(rule) %>
+  <%= link_to 'Show', rule %>
+    <%= link_to 'Edit', edit_rule_path(rule) %>
   <%= link_to 'Destroy', rule, :confirm => 'Are you sure?', :method => :delete %><br/>
   <% end %>  
 </p>

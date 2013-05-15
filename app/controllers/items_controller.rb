@@ -59,16 +59,18 @@ class ItemsController < ApplicationController
     
     # check patient has medical scheme
     
-    if not scheme_id = AccountScheme.find_by_account_id(@item.account_id).nil?
-      scheme_id = AccountScheme.find_by_account_id(@item.account_id).medical_scheme_id
-      @rules = Rule.find_all_by_medical_scheme(scheme_id) # get all rules that patient has (array)
-      
+    if not schemes_array = AccountScheme.find_all_by_account_id(@item.account_id).map{ |scheme| [scheme.id]}.nil?  
+      @rules = Rule.find_all_by_medical_scheme_id_and_product_id(schemes_array,@item.product_id)
+    
+      #note: should be fixed later to make it work on duplicated product of rules on different schemes
+    
       if @rule = @rules.detect{|rule| rule.product_id == @item.product_id} # find exact rule that has product_id
         @item.rule_id = @rule.id # save the rule id to @item.rule_id
         @item.final_price = @item.original_price * (1 - @rule.rate)   # apply discount, save final price
 	  else
 	    @item.final_price = @item.original_price 
 	  end
+      
 	else
 	  @item.final_price = @item.original_price 
     end

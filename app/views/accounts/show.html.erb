@@ -18,6 +18,16 @@
 
 <hr>
 
+<p>
+  <b>Medical Schemes</b><br/>
+  <% @schemes_array.each do |medical_scheme|%>
+  <%   account_scheme = AccountScheme.find_by_medical_scheme_id(medical_scheme.id)%>
+  <%=  medical_scheme.name %>
+  <%=  link_to 'Show', medical_scheme %>
+  <%=  link_to 'Remove',  account_scheme, :confirm => 'Are you sure?', :method => :delete %><br/>
+  <% end %>
+</p>
+
 
 <p>
   Add medical scheme <br/>
