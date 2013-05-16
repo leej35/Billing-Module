@@ -34,18 +34,30 @@
   <% elsif params[:type] == "admission" %>
   <p>
     Admission:
-    <% wards_types_array = Admission.all.map { |ward_type| [ward_type.ward_type, ward_type.id] } %>
-	<%= options_for_select(wards_types_array) %>
-	<%= f.select(:ward_type.id, options_for_select(wards_types_array)) %>
-  </p>
-   <p>
-    <%= f.label :original_price %><br />
-    <%= f.text_field :original_price %>
+    
+    <h1>New admission</h1>
+</p>	
+	<% form_for(@admission) do |af| %>
+    <%= af.error_messages %>
+
+  <p>
+    <%= af.label :start_date %><br />
+    <%= af.datetime_select :start_date %>
   </p>
   <p>
-    <%= f.label :final_price %><br />
-    <%= f.text_field :final_price %>
+    <%= af.label :end_date %><br />
+    <%= af.datetime_select :end_date %>
   </p>
+  <p>
+    <% wards_types_array = WardType.all.map { |ward_type| [ward_type.ward_type, ward_type.id] } %>
+	<%= options_for_select(wards_types_array) %>
+	<%= af.select(:ward_type, options_for_select(wards_types_array)) %>
+  </p>
+  <p>
+    <%= af.submit 'Create' %>
+  </p>
+  <% end %>
+
   <% else %>
   <p>
     Wrong parameter for type of service!<br/>

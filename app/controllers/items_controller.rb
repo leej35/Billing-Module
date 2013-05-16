@@ -25,7 +25,9 @@ class ItemsController < ApplicationController
   # GET /items/new.xml
   def new
     @item = Item.new
-
+    if params[:type] == "admission"
+      @admission = Admission.new
+    end
     respond_to do |format|
       format.html # new.html.erb
       format.xml  { render :xml => @item }
@@ -58,19 +60,28 @@ class ItemsController < ApplicationController
     end
     
     # check patient has medical scheme
-    
-    if not schemes_array = AccountScheme.find_all_by_account_id(@item.account_id).map{ |scheme| [scheme.id]}.nil?  
-      @rules = Rule.find_all_by_medical_scheme_id_and_product_id(schemes_array,@item.product_id)
-    
-      #note: should be fixed later to make it work on duplicated product of rules on different schemes
-    
-      if @rule = @rules.detect{|rule| rule.product_id == @item.product_id} # find exact rule that has product_id
+    if not AccountScheme.find_all_by_account_id(@item.account_id).map{ |scheme| [scheme.id]}.nil?  
+      schemes_array = AccountScheme.find_all_by_account_id(@item.account_id).map{ |scheme| scheme.medical_scheme_id}
+      if not Rule.find_all_by_medical_scheme_id_and_product_id(schemes_array,@item.product_id).nil?
+        rules = Rule.find_all_by_medical_scheme_id_and_product_id(schemes_array,@item.product_id)
+        
+        #apply rule that has maximum rate among multiple rules
+		i=0
+		rules.each do |rule|
+		  max_rate = rule.rate
+		  if max_rate < rule.rate 
+  		    max_rate=rule.rate
+  		    max_index = i
+  		  end
+		  i+=1
+		end
+		
+		@rule = rules[i-1]
         @item.rule_id = @rule.id # save the rule id to @item.rule_id
         @item.final_price = @item.original_price * (1 - @rule.rate)   # apply discount, save final price
 	  else
 	    @item.final_price = @item.original_price 
 	  end
-      
 	else
 	  @item.final_price = @item.original_price 
     end

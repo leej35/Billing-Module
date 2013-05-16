@@ -1,37 +1,21 @@
 ActionController::Routing::Routes.draw do |map|
   map.resources :accounts
-
   map.resources :types
-
   map.resources :rules
-
   map.resources :account, :belongs_to => :patient
-  
   map.resources :patient, :has_one => :account
-
   map.resources :medical_schemes, :has_many => :rules
-
   map.resources :tests
-
   map.resources :departments
-
   map.resources :account_item_lists
-
   map.resources :account_schemes
-
   map.resources :ward_types
-
   map.resources :drug_items
-
   map.resources :services
-
   map.resources :scheme_providers
-
   map.resources :items
-
   map.resources :admissions
-
-	map.devise_for :users
+  map.devise_for :users
   map.root :controller => "people"
   map.clinic  '/clinic',  :controller => 'clinic', :action => 'index'
   map.create_remote  '/patient/create_remote',  :controller => 'people', :action => 'create_remote'

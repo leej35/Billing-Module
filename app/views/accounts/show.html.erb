@@ -16,6 +16,18 @@
   <%= link_to 'New Item: Admission', :controller => "items", :action => "new", :account_id => @account.id, :type => "admission" %><br/>
 </p>
 
+<p>
+  <b>Items on account</b></br>
+  <% @items.each do |item|%>
+  <span><%=   item.product_id%></span>
+  <span><%=   item.final_price%></span>
+  <span><%=   item.is_paid%></span>
+  
+  <%= link_to 'Show', item %><br/>
+  <% end %>
+</p>
+
+
 <hr>
 
 <p>
