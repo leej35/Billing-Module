@@ -22,42 +22,15 @@
     <%= options_for_select(drugitems_array) %>
     <%= f.select(:product_id, options_for_select(drugitems_array)) %>
   </p>
-  <p>
-    <%= f.label :original_price %><br />
-    <%= f.text_field :original_price %>
-  </p>
-  <p>
-    <%= f.label :final_price %><br />
-    <%= f.text_field :final_price %>
-  </p>
 
   <% elsif params[:type] == "admission" %>
   <p>
     Admission:
+    <%= f.hidden_field :account_id, :value => @admission.account_id %>
+    <%= f.hidden_field :product_id, :value => @admission.product_id %>
+    <%= f.hidden_field :original_price, :value => @admission.totalprice %> 
     
-    <h1>New admission</h1>
-</p>	
-	<% form_for(@admission) do |af| %>
-    <%= af.error_messages %>
-
-  <p>
-    <%= af.label :start_date %><br />
-    <%= af.datetime_select :start_date %>
   </p>
-  <p>
-    <%= af.label :end_date %><br />
-    <%= af.datetime_select :end_date %>
-  </p>
-  <p>
-    <% wards_types_array = WardType.all.map { |ward_type| [ward_type.ward_type, ward_type.id] } %>
-	<%= options_for_select(wards_types_array) %>
-	<%= af.select(:ward_type, options_for_select(wards_types_array)) %>
-  </p>
-  <p>
-    <%= af.submit 'Create' %>
-  </p>
-  <% end %>
-
   <% else %>
   <p>
     Wrong parameter for type of service!<br/>

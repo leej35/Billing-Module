@@ -1,4 +1,6 @@
 ActionController::Routing::Routes.draw do |map|
+  map.resources :companies
+
   map.resources :accounts
   map.resources :types
   map.resources :rules

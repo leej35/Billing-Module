@@ -2,12 +2,18 @@
 
 <table>
   <tr>
-    <th>Patient</th>
+    <th>Name</th>
+    <th>Sex</th>
+    <th>Age</th>
+    <th>Patient ID</th>
     <th>Balance</th>
   </tr>
 
 <% @accounts.each do |account| %>
   <tr>
+    <td><%=h PatientService.get_patient(Patient.find(account.patient_id).person).name %></td>
+    <td><%=h PatientService.get_patient(Patient.find(account.patient_id).person).sex %></td>
+    <td><%=h PatientService.get_patient(Patient.find(account.patient_id).person).age %></td>
     <td><%=h account.patient_id %></td>
     <td><%=h account.balance %></td>
     <td><%= link_to 'Show', account %></td>

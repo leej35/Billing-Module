@@ -3,7 +3,7 @@ class AccountsController < ApplicationController
   # GET /accounts.xml
   def index
     @accounts = Account.all
-
+	
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @accounts }
@@ -14,12 +14,15 @@ class AccountsController < ApplicationController
   # GET /accounts/1.xml
   def show
     @account = Account.find(params[:id])
-
+    @patient = Patient.find(@account.patient_id)
+	@patient_bean = PatientService.get_patient(@patient.person)
   
 	scheme_ids = AccountScheme.find_all_by_account_id(@account.id).map { |account_scheme| [account_scheme.medical_scheme_id]}      
     @schemes_array = MedicalScheme.find(scheme_ids)
 
-	@items = Item.find_all_by_account_id(@account.id)
+	@items_paid = Item.find_all_by_account_id_and_is_paid(@account.id,1)
+	@items_unpaid = Item.find_all_by_account_id_and_is_paid(@account.id,0)
+	
 	#     @medical_schemes = MedicalScheme.find_all_by_id(account_schemes.medical_scheme_id)
 
 # #     

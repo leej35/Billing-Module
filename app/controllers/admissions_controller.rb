@@ -25,7 +25,7 @@ class AdmissionsController < ApplicationController
   # GET /admissions/new.xml
   def new
     @admission = Admission.new
-
+    @admission.account_id = params[:account_id]
     respond_to do |format|
       format.html # new.html.erb
       format.xml  { render :xml => @admission }
@@ -41,11 +41,21 @@ class AdmissionsController < ApplicationController
   # POST /admissions.xml
   def create
     @admission = Admission.new(params[:admission])
+    if Admission.last.nil?
+ 	  admission_id = 1
+ 	else
+ 	  admission_id = Admission.last.id + 1
+    end
+	@admission.product_id = "adm_" + admission_id.id.to_s
+
+	#calculate price of admission
+	@days = (@admission.end_date.to_date - @admission.start_date.to_date).numerator
+	@admission.totalprice = @days * WardType.find(@admission.ward_type).daily_price
 
     respond_to do |format|
       if @admission.save
         flash[:notice] = 'Admission was successfully created.'
-        format.html { redirect_to(@admission) }
+        format.html { redirect_to( :controller => "items", :action => "new", :admission => @admission ,:account_id => @account.id, :type => "admission") }
         format.xml  { render :xml => @admission, :status => :created, :location => @admission }
       else
         format.html { render :action => "new" }

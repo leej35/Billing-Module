@@ -7,6 +7,7 @@
     <th>Start date</th>
     <th>End date</th>
     <th>Ward type</th>
+    <th>Patient Name</th>
   </tr>
 
 <% @admissions.each do |admission| %>
@@ -16,6 +17,7 @@
     <td><%=h admission.start_date %></td>
     <td><%=h admission.end_date %></td>
     <td><%=h admission.ward_type %></td>
+    <td><%=h PatientService.get_patient(Patient.find(Account.find(admission.account_id).patient_id).person).name %></td>
     <td><%= link_to 'Show', admission %></td>
     <td><%= link_to 'Edit', edit_admission_path(admission) %></td>
     <td><%= link_to 'Destroy', admission, :confirm => 'Are you sure?', :method => :delete %></td>

@@ -26,7 +26,7 @@ class ItemsController < ApplicationController
   def new
     @item = Item.new
     if params[:type] == "admission"
-      @admission = Admission.new
+    	@admission = Admission.find(params[:admission])
     end
     respond_to do |format|
       format.html # new.html.erb
@@ -44,6 +44,7 @@ class ItemsController < ApplicationController
   def create
     @item = Item.new(params[:item])
     @item.account_id = @item.account_id.to_i
+    @item.is_paid = 0
     
     # add additional information to item
     if @item.product_id.slice(0,3) == "svc"
@@ -54,7 +55,6 @@ class ItemsController < ApplicationController
       @item.original_price = DrugItem.find_by_product_id(@item.product_id).price
     elsif @item.product_id.slice(0,3) == "adm"
       @item.product_type = "admission"
-      @item.original_price = Admission.find_by_product_id(@item.product_id).price      
     else
       @item.product_type = "wrongtype"
     end
@@ -79,6 +79,26 @@ class ItemsController < ApplicationController
 		@rule = rules[i-1]
         @item.rule_id = @rule.id # save the rule id to @item.rule_id
         @item.final_price = @item.original_price * (1 - @rule.rate)   # apply discount, save final price
+	  
+	  elsif Rule.find_all_by_medical_scheme_id_and_product_id(schemes_array,Admission.find_by_product_id(@item.product_id).ward_type) # apply rule for "admission"
+        rules = Rule.find_all_by_medical_scheme_id_and_product_id(schemes_array,Admission.find_by_product_id(@item.product_id).ward_type)
+        
+        #apply rule that has maximum rate among multiple rules
+		i=0
+		rules.each do |rule|
+		  max_rate = rule.rate
+		  if max_rate < rule.rate 
+  		    max_rate=rule.rate
+  		    max_index = i
+  		  end
+		  i+=1
+		end
+		
+		@rule = rules[i-1]
+        @item.rule_id = @rule.id # save the rule id to @item.rule_id
+        @item.final_price = @item.original_price * (1 - @rule.rate)   # apply discount, save final price
+	  
+	    
 	  else
 	    @item.final_price = @item.original_price 
 	  end
