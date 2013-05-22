@@ -30,7 +30,7 @@ class PaymentsController < ApplicationController
   # GET /payments/1.xml
   def show
     @payment = Payment.find(params[:id])
-
+	@items = Item.find_all_by_payment_id(@payment.id)
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @payment }
@@ -42,7 +42,8 @@ class PaymentsController < ApplicationController
   def new
     @payment = Payment.new
 	@payment.amount = 0
-	
+	@user = current_user.id rescue ""
+
 	@items = Item.find(params[:items])
     if Payment.last.nil?
  	  payment_id = 1
@@ -50,7 +51,7 @@ class PaymentsController < ApplicationController
  	  payment_id = Payment.last.id + 1
     end
 	
-	
+	# get total price and save it on item
 	@items.each do |item|
 	  @payment.amount = item.final_price + @payment.amount
 	  item.is_paid = true
@@ -59,7 +60,11 @@ class PaymentsController < ApplicationController
 	end
 	
 	@payment.account_id = @items.first.account_id
-	
+	# adjusting balance
+	@account = Account.find(@payment.account_id)
+	@account.balance = @account.balance + @payment.amount
+	@account.save
+
     respond_to do |format|
       format.html # new.html.erb
       format.xml  { render :xml => @payment }
@@ -77,12 +82,11 @@ class PaymentsController < ApplicationController
   # POST /payments.xml
   def create
     @payment = Payment.new(params[:payment])
-# 	@payment.account_id = @payment.account_id
-
+    @account = Account.find(@payment.account_id)    
     respond_to do |format|
       if @payment.save
         flash[:notice] = 'Payment was successfully created.'
-        format.html { redirect_to(@payment) }
+        format.html { redirect_to(@account) }
         format.xml  { render :xml => @payment, :status => :created, :location => @payment }
       else
         format.html { render :action => "new" }
@@ -95,11 +99,11 @@ class PaymentsController < ApplicationController
   # PUT /payments/1.xml
   def update
     @payment = Payment.find(params[:id])
-
+	@account = Account.find(@payment.account_id)
     respond_to do |format|
       if @payment.update_attributes(params[:payment])
         flash[:notice] = 'Payment was successfully updated.'
-        format.html { redirect_to(@payment) }
+        format.html { redirect_to(@account) }
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }

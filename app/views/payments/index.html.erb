@@ -2,8 +2,9 @@
 
 <table>
   <tr>
-    <th>id</id>
-    <th>Pay type</th>
+    <th>Date</td>
+    <th>Payment-id</td>
+    <th>Type</th>
     <th>Amount</th>
     <th>Patient</th>
     <th>Receptionist</th>
@@ -11,11 +12,12 @@
 
 <% @payments.each do |payment| %>
   <tr>
+    <td><%=h payment.created_at.to_date%>
     <td><%=h payment.id %></td>
     <td><%=h PayType.find(payment.pay_type).name %></td>
     <td><%=h payment.amount %></td>
     <td><%=h PatientService.get_patient(Patient.find(Account.find(payment.account_id).patient_id).person).name%></td>
-    <td><%=h payment.user_id %></td>
+    <td><%=h User.find(payment.user_id).name %></td>
     
     
     <td><%= link_to 'Show', payment %></td>

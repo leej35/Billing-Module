@@ -7,14 +7,19 @@
   <b>Amount:</b>
   <%=h @payment.amount %>
 </p>
-
 <p>
-  <b>User:</b>
-  <%=h @payment.user_id %>
+  <b>Receptionist:</b>
+  <%=h User.find(@payment.user_id).name %>
 </p>
 <p>
   <b>Account_id:</b>
   <%=h @payment.account_id %>
+</p>
+<p>
+  <b>Items</b><br>
+  <% @items.each do |item| %>
+    <%= link_to item.name, item %><br/>
+  <% end %>
 </p>
 
 

@@ -1,9 +1,8 @@
 <p>
-  <b>Account:
-  <%=h @account.id %></b><br/>
-
-  <%=h @patient_bean.first_name%> <%=h @patient_bean.last_name%><br/>
-  <%=h @patient_bean.sex %> | <%= h @patient_bean.age%></br>	
+  <b>Account Information </b><br/>
+  account id:   <%=h @account.id %><br/>
+  patient name:   <%=h @patient_bean.first_name%> <%=h @patient_bean.last_name%><br/>
+  sex: <%=h @patient_bean.sex %> | age: <%= h @patient_bean.age%></br>	
   
 </p>
 
@@ -19,12 +18,12 @@
   <%= link_to 'New Item: Drug', :controller => "items", :action => "new", :account_id => @account.id, :type => "drug" %><br/>
   <%= link_to 'New Item: Admission', :controller => "admissions", :action => "new", :account_id => @account.id %><br/>
 </p>
-
+<hr>
 
 <p>
   <b>Items Unpaid</b></br>
   <% @items_unpaid.each do |item|%>
-  <span><%=   item.product_id%></span>
+  <span><%=   item.name%></span>
   <span><%=   item.final_price%></span>
   <span><%=   item.is_paid%></span>
   
@@ -33,18 +32,23 @@
 </p>
 <hr>
 
-<%= link_to 'Payment',:controller => :payments, :action => :summary, :account_id => @account.id %>
+<%= link_to 'Checkout',:controller => :payments, :action => :summary, :account_id => @account.id %>
 
 <hr>
 <p>
   <b>Items Paid</b></br>
   <% @items_paid.each do |item|%>
-  <span><%=   item.product_id%></span>
+  <span><%=   item.name%></span>
   <span><%=   item.final_price%></span>
   <span><%=   item.is_paid%></span>
   
   <%= link_to 'Show', item %><br/>
   <% end %>
+</p>
+<hr>
+<p>
+  <b>Add medical scheme</b> <br/>
+  <%= link_to 'Add Medical Scheme', :controller => "account_schemes", :action => "new", :account_id => @account %>
 </p>
 
 <hr>
@@ -58,11 +62,6 @@
   <% end %>
 </p>
 
-
-<p>
-  Add medical scheme <br/>
-  <%= link_to 'Add Medical Scheme', :controller => "account_schemes", :action => "new", :account_id => @account %>
-</p>
 
 
 <hr>

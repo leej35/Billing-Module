@@ -3,7 +3,8 @@
 <table>
   <tr>
     <th>Product</th>
-    <th>Product type</th>
+    <th>Product-Name</th>
+    <th>Type</th>
     <th>Original price</th>
     <th>Final price</th>
     <th>Is paid</th>
@@ -16,6 +17,7 @@
 <% @items.each do |item| %>
   <tr>
     <td><%=h item.product_id %></td>
+    <td><%=h item.name %></td>
     <td><%=h item.product_type %></td>
     <td><%=h item.original_price %></td>
     <td><%=h item.final_price %></td>

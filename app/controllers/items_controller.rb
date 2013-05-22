@@ -10,13 +10,6 @@ class ItemsController < ApplicationController
     end
   end
 
-  # GET /items/hello
-  # GET /items/hello.xml
-
-  def hello
-    raise "hello world".to_yaml
-  end
-
   # GET /items/1
   # GET /items/1.xml
   def show
@@ -57,11 +50,14 @@ class ItemsController < ApplicationController
     if @item.product_id.slice(0,3) == "svc"
       @item.product_type = "service"
       @item.original_price = Service.find_by_product_id(@item.product_id).price
+      @item.name = Service.find_by_product_id(@item.product_id).name
     elsif @item.product_id.slice(0,3) == "drg"
       @item.product_type = "drugitem"
       @item.original_price = DrugItem.find_by_product_id(@item.product_id).price
+	  @item.name = DrugItem.find_by_product_id(@item.product_id).name
     elsif @item.product_id.slice(0,3) == "adm"
       @item.product_type = "admission"
+      @item.name = "Admission-" + WardType.find(Admission.find_by_product_id(@item.product_id).ward_type).ward_type
     else
       @item.product_type = "wrongtype"
     end
@@ -115,10 +111,16 @@ class ItemsController < ApplicationController
     else
       @item.final_price = @item.original_price 
     end
+    
+    # adjust balance
+    @account = Account.find(@item.account_id)
+    @account.balance = @account.balance - @item.final_price  
+    @account.save
+    
     respond_to do |format|
       if @item.save
         flash[:notice] = 'Item was successfully created.'
-        format.html { redirect_to(@item) }
+        format.html { redirect_to(@account) }
         format.xml  { render :xml => @item, :status => :created, :location => @item }
       else
         format.html { render :action => "new" }
@@ -131,11 +133,11 @@ class ItemsController < ApplicationController
   # PUT /items/1.xml
   def update
     @item = Item.find(params[:id])
-
+    @account = Account.find(@item.account_id)
     respond_to do |format|
       if @item.update_attributes(params[:item])
         flash[:notice] = 'Item was successfully updated.'
-        format.html { redirect_to(@item) }
+        format.html { redirect_to(@account) }
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }
