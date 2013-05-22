@@ -9,7 +9,8 @@
     <th>Is paid</th>
     <th>Rule</th>
     <th>Account ID</th>
-    
+    <th>Payment ID</th>
+
   </tr>
 
 <% @items.each do |item| %>
@@ -20,7 +21,9 @@
     <td><%=h item.final_price %></td>
     <td><%=h item.is_paid %></td>
     <td><%=h item.rule_id %></td>
-    <td><%=h item.account_id %></td>
+    <td><%=h item.account_id %></td> 
+    <td><%=h item.payment_id %></td>
+
     <td><%= link_to 'Show', item %></td>
     <td><%= link_to 'Edit', edit_item_path(item) %></td>
     <td><%= link_to 'Destroy', item, :confirm => 'Are you sure?', :method => :delete %></td>

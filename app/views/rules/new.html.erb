@@ -26,7 +26,7 @@
   <% elsif params[:type] == "admission" %>
   <p>
     Admission:
-    <% wardtypes_array = WardType.all.map { |ward_type| [ward_type.ward_type, ward_type.id] } %>
+    <% wardtypes_array = WardType.all.map { |ward_type| [ward_type.ward_type, ward_type.product_id] } %>
 	<%= options_for_select(wardtypes_array) %>
 	<%= f.select(:product_id, options_for_select(wardtypes_array)) %>
   </p>

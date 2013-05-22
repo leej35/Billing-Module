@@ -1,9 +1,11 @@
 ActionController::Routing::Routes.draw do |map|
+  map.resources :pay_types  
+  map.summary '/payments/summary', :controller => 'payments', :action => 'summary'
+  map.resources :payments, :belongs_to => :account
   map.resources :companies
-
-  map.resources :accounts
+  map.resources :accounts, :belongs_to => :patient, :has_many => :payments
   map.resources :types
-  map.resources :rules
+  map.resources :rules, :belongs_to => :medical_schemes
   map.resources :account, :belongs_to => :patient
   map.resources :patient, :has_one => :account
   map.resources :medical_schemes, :has_many => :rules
@@ -26,6 +28,7 @@ ActionController::Routing::Routes.draw do |map|
   map.logout '/logout', :controller => 'sessions', :action => 'destroy'
   map.location '/location', :controller => 'sessions', :action => 'location'
   map.encounter '/encounters/new/:encounter_type', :controller => 'encounters', :action => 'new'  
+  
   map.resource :session
   map.resources :dispensations, :collection => {:quantities => :get}
   map.resources :barcodes, :collection => {:label => :get}
@@ -35,5 +38,4 @@ ActionController::Routing::Routes.draw do |map|
   map.connect ':controller/:action/:id.:format'
   map.connect ':controller/:action/:id'
   map.connect ':controller/:action/'
-
 end

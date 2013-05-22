@@ -41,6 +41,13 @@ class WardTypesController < ApplicationController
   # POST /ward_types.xml
   def create
     @ward_type = WardType.new(params[:ward_type])
+    if WardType.last.nil?
+ 	  wardtype_id = 1
+ 	else
+ 	  wardtype_id = WardType.last.id + 1
+    end
+	@ward_type.product_id = "wrd_" + wardtype_id.to_s
+
 
     respond_to do |format|
       if @ward_type.save

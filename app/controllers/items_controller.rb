@@ -10,6 +10,13 @@ class ItemsController < ApplicationController
     end
   end
 
+  # GET /items/hello
+  # GET /items/hello.xml
+
+  def hello
+    raise "hello world".to_yaml
+  end
+
   # GET /items/1
   # GET /items/1.xml
   def show
@@ -62,50 +69,52 @@ class ItemsController < ApplicationController
     # check patient has medical scheme
     if not AccountScheme.find_all_by_account_id(@item.account_id).map{ |scheme| [scheme.id]}.nil?  
       schemes_array = AccountScheme.find_all_by_account_id(@item.account_id).map{ |scheme| scheme.medical_scheme_id}
-      if not Rule.find_all_by_medical_scheme_id_and_product_id(schemes_array,@item.product_id).nil?
-        rules = Rule.find_all_by_medical_scheme_id_and_product_id(schemes_array,@item.product_id)
-        
-        #apply rule that has maximum rate among multiple rules
-		i=0
-		rules.each do |rule|
-		  max_rate = rule.rate
-		  if max_rate < rule.rate 
-  		    max_rate=rule.rate
-  		    max_index = i
-  		  end
-		  i+=1
-		end
-		
-		@rule = rules[i-1]
-        @item.rule_id = @rule.id # save the rule id to @item.rule_id
-        @item.final_price = @item.original_price * (1 - @rule.rate)   # apply discount, save final price
-	  
-	  elsif Rule.find_all_by_medical_scheme_id_and_product_id(schemes_array,Admission.find_by_product_id(@item.product_id).ward_type) # apply rule for "admission"
-        rules = Rule.find_all_by_medical_scheme_id_and_product_id(schemes_array,Admission.find_by_product_id(@item.product_id).ward_type)
-        
-        #apply rule that has maximum rate among multiple rules
-		i=0
-		rules.each do |rule|
-		  max_rate = rule.rate
-		  if max_rate < rule.rate 
-  		    max_rate=rule.rate
-  		    max_index = i
-  		  end
-		  i+=1
-		end
-		
-		@rule = rules[i-1]
-        @item.rule_id = @rule.id # save the rule id to @item.rule_id
-        @item.final_price = @item.original_price * (1 - @rule.rate)   # apply discount, save final price
-	  
-	    
-	  else
-	    @item.final_price = @item.original_price 
-	  end
-	else
-	  @item.final_price = @item.original_price 
-    end
 
+      if @item.product_type == "service" || @item.product_type == "drugitem"
+        if Rule.find_all_by_medical_scheme_id_and_product_id(schemes_array,@item.product_id).any?
+          rules = Rule.find_all_by_medical_scheme_id_and_product_id(schemes_array,@item.product_id)
+          #apply rule that has maximum rate among multiple rules
+		  i=0
+		  rules.each do |rule|
+		    max_rate = rule.rate
+		    if max_rate < rule.rate 
+  		      max_rate=rule.rate
+  		      max_index = i
+  		    end
+		    i+=1
+		  end
+		  @rule = rules[i-1]
+          @item.rule_id = @rule.id # save the rule id to @item.rule_id
+          @item.final_price = @item.original_price * (1 - @rule.rate)   # apply discount, save final price
+	    else
+	      @item.final_price = @item.original_price
+	    end
+	    
+	  elsif @item.product_type == "admission"  
+	    if Rule.find_all_by_medical_scheme_id_and_product_id(schemes_array,WardType.find(Admission.find_by_product_id(@item.product_id).ward_type).product_id).any? # apply rule for "admission"
+          rules = Rule.find_all_by_medical_scheme_id_and_product_id(schemes_array,WardType.find(Admission.find_by_product_id(@item.product_id).ward_type).product_id)
+        
+          #apply rule that has maximum rate among multiple rules
+		  i=0
+		  rules.each do |rule|
+		    max_rate = rule.rate
+		    if max_rate < rule.rate 
+  		      max_rate=rule.rate
+  		      max_index = i
+  		    end
+		    i+=1
+		  end
+		
+		  @rule = rules[i-1]
+          @item.rule_id = @rule.id # save the rule id to @item.rule_id
+          @item.final_price = @item.original_price * (1 - @rule.rate)   # apply discount, save final price    
+	    else
+	      @item.final_price = @item.original_price 
+	    end
+      end
+    else
+      @item.final_price = @item.original_price 
+    end
     respond_to do |format|
       if @item.save
         flash[:notice] = 'Item was successfully created.'

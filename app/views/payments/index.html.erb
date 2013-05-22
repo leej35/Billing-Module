@@ -1,0 +1,29 @@
+<h1>Listing payments</h1>
+
+<table>
+  <tr>
+    <th>id</id>
+    <th>Pay type</th>
+    <th>Amount</th>
+    <th>Patient</th>
+    <th>Receptionist</th>
+  </tr>
+
+<% @payments.each do |payment| %>
+  <tr>
+    <td><%=h payment.id %></td>
+    <td><%=h PayType.find(payment.pay_type).name %></td>
+    <td><%=h payment.amount %></td>
+    <td><%=h PatientService.get_patient(Patient.find(Account.find(payment.account_id).patient_id).person).name%></td>
+    <td><%=h payment.user_id %></td>
+    
+    
+    <td><%= link_to 'Show', payment %></td>
+    <td><%= link_to 'Edit', edit_payment_path(payment) %></td>
+    <td><%= link_to 'Destroy', payment, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+
+<%= link_to 'New payment (Summary)', :controller => :payments, :action => :summary, :account_id => params[:account_id] %>

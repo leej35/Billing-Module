@@ -3,6 +3,7 @@
 <table>
   <tr>
     <th>Ward type</th>
+    <th>Product ID</th>   
     <th>Daily price</th>
     <th>Version</th>
   </tr>
@@ -10,6 +11,7 @@
 <% @ward_types.each do |ward_type| %>
   <tr>
     <td><%=h ward_type.ward_type %></td>
+    <td><%=h ward_type.product_id %></td>
     <td><%=h ward_type.daily_price %></td>
     <td><%=h ward_type.version %></td>
     <td><%= link_to 'Show', ward_type %></td>

@@ -1,0 +1,29 @@
+<h1>New payment</h1>
+
+Account id: 
+<%= @payment.account_id %>
+
+<% form_for(@payment) do |f| %>
+  <%= f.error_messages %>
+  <%= f.hidden_field :account_id, :value => @payment.account_id %>
+
+  <p>
+    <%= f.label :pay_type %><br />
+    <%  pay_type_array = PayType.all.map { |paytype| [paytype.name, paytype.id] } %>
+    <%= options_for_select(pay_type_array) %>
+    <%= f.select(:pay_type, options_for_select(pay_type_array)) %>
+  </p>
+  <p>
+    <%= f.label :amount %><br />
+    <%= f.text_field :amount, :value => @payment.amount %>
+  </p>
+  <p>
+    <%= f.label :user_id %><br />
+    <%= f.text_field :user_id %>
+  </p>
+  <p>
+    <%= f.submit 'Create' %>
+  </p>
+<% end %>
+
+<%= link_to 'Back', payments_path %>

@@ -20,16 +20,6 @@
   <%= link_to 'New Item: Admission', :controller => "admissions", :action => "new", :account_id => @account.id %><br/>
 </p>
 
-<p>
-  <b>Items Paid</b></br>
-  <% @items_paid.each do |item|%>
-  <span><%=   item.product_id%></span>
-  <span><%=   item.final_price%></span>
-  <span><%=   item.is_paid%></span>
-  
-  <%= link_to 'Show', item %><br/>
-  <% end %>
-</p>
 
 <p>
   <b>Items Unpaid</b></br>
@@ -41,9 +31,23 @@
   <%= link_to 'Show', item %><br/>
   <% end %>
 </p>
-
 <hr>
 
+<%= link_to 'Payment',:controller => :payments, :action => :summary, :account_id => @account.id %>
+
+<hr>
+<p>
+  <b>Items Paid</b></br>
+  <% @items_paid.each do |item|%>
+  <span><%=   item.product_id%></span>
+  <span><%=   item.final_price%></span>
+  <span><%=   item.is_paid%></span>
+  
+  <%= link_to 'Show', item %><br/>
+  <% end %>
+</p>
+
+<hr>
 <p>
   <b>Medical Schemes</b><br/>
   <% @schemes_array.each do |medical_scheme|%>
@@ -62,5 +66,7 @@
 
 
 <hr>
+
+
 <%= link_to 'Edit Account', edit_account_path(@account) %> |
 <%= link_to 'Back', accounts_path %>
