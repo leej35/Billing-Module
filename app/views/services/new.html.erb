@@ -13,9 +13,8 @@
   </p>
   <p>
     Price type<br />
-    <%  types_array = Type.all.map { |type| [type.name, type.name] } %>
-    <%= options_for_select(types_array) %>
-    <%= f.select(:service_type, options_for_select(types_array)) %>
+    <%= f.text_field :service_type %>
+
   </p>
   <p>
     <%= f.label :department %><br />
