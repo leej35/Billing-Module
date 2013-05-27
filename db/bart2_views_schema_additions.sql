@@ -202,37 +202,12 @@ CREATE OR REPLACE ALGORITHM=UNDEFINED  SQL SECURITY INVOKER
 
 CREATE OR REPLACE ALGORITHM=UNDEFINED  SQL SECURITY INVOKER 
   VIEW `start_date_observation` AS 
-  SELECT `obs`.`obs_id` AS `obs_id`,
-         `obs`.`person_id` AS `person_id`,
-         `obs`.`concept_id` AS `concept_id`,
-         `obs`.`encounter_id` AS `encounter_id`,
-         `obs`.`order_id` AS `order_id`,
+  SELECT `obs`.`person_id` AS `person_id`,
          `obs`.`obs_datetime` AS `obs_datetime`,
-         `obs`.`location_id` AS `location_id`,
-         `obs`.`obs_group_id` AS `obs_group_id`,
-         `obs`.`accession_number` AS `accession_number`,
-         `obs`.`value_group_id` AS `value_group_id`,
-         `obs`.`value_boolean` AS `value_boolean`,
-         `obs`.`value_coded` AS `value_coded`,
-         `obs`.`value_coded_name_id` AS `value_coded_name_id`,
-         `obs`.`value_drug` AS `value_drug`,
-         `obs`.`value_datetime` AS `value_datetime`,
-         `obs`.`value_numeric` AS `value_numeric`,
-         `obs`.`value_modifier` AS `value_modifier`,
-         `obs`.`value_text` AS `value_text`,
-         `obs`.`date_started` AS `date_started`,
-         `obs`.`date_stopped` AS `date_stopped`,
-         `obs`.`comments` AS `comments`,
-         `obs`.`creator` AS `creator`,
-         `obs`.`date_created` AS `date_created`,
-         `obs`.`voided` AS `voided`,
-         `obs`.`voided_by` AS `voided_by`,
-         `obs`.`date_voided` AS `date_voided`,
-         `obs`.`void_reason` AS `void_reason`,
-         `obs`.`value_complex` AS `value_complex`,
-         `obs`.`uuid` AS `uuid` 
+         `obs`.`value_datetime` AS `value_datetime`
   FROM `obs` 
-  WHERE ((`obs`.`concept_id` = 2516) AND (`obs`.`voided` = 0));
+  WHERE ((`obs`.`concept_id` = 2516) AND (`obs`.`voided` = 0))
+  GROUP BY `obs`.`person_id`,`obs`.`value_datetime`;
 
 CREATE OR REPLACE ALGORITHM=UNDEFINED  SQL SECURITY INVOKER
   VIEW `tb_status_observations` AS
@@ -371,17 +346,10 @@ DELIMITER ;;
 BEGIN
 	DECLARE done INT DEFAULT FALSE;
 	DECLARE my_start_date, my_expiry_date, my_obs_datetime DATETIME;
-<<<<<<< HEAD
-	DECLARE my_daily_dose, my_quantity INT;
-	DECLARE flag INT;
-
-	DECLARE cur1 CURSOR FOR SELECT o.start_date, d.equivalent_daily_dose daily_dose, d.quantity, o.start_date FROM drug_order d
-=======
 	DECLARE my_daily_dose, my_quantity, my_pill_count, my_total_text, my_total_numeric DECIMAL;
 	DECLARE my_drug_id, flag INT;
 
 	DECLARE cur1 CURSOR FOR SELECT d.drug_inventory_id, o.start_date, d.equivalent_daily_dose daily_dose, d.quantity, o.start_date FROM drug_order d
->>>>>>> 9f04c639eec033f4079dba4a7c4fc4cef49ad56e
 		INNER JOIN arv_drug ad ON d.drug_inventory_id = ad.drug_id		
 		INNER JOIN orders o ON d.order_id = o.order_id
 			AND d.quantity > 0
@@ -400,40 +368,23 @@ BEGIN
 			AND o.patient_id = my_patient_id
 		GROUP BY o.patient_id;
 
-<<<<<<< HEAD
-
-
-	OPEN cur1;
-
-	SET flag = 0;
-
-	read_loop: LOOP
-		FETCH cur1 INTO my_start_date, my_daily_dose, my_quantity, my_obs_datetime;
-=======
 	OPEN cur1;
 
 	SET flag = 0;
 
 	read_loop: LOOP
 		FETCH cur1 INTO my_drug_id, my_start_date, my_daily_dose, my_quantity, my_obs_datetime;
->>>>>>> 9f04c639eec033f4079dba4a7c4fc4cef49ad56e
 
 		IF done THEN
 			CLOSE cur1;
 			LEAVE read_loop;
 		END IF;
-<<<<<<< HEAD
-
-		IF DATE(my_obs_datetime) = DATE(@obs_datetime) THEN
-			SET @expiry_date = ADDDATE(my_start_date, (my_quantity/my_daily_dose));
-=======
 
 		IF DATE(my_obs_datetime) = DATE(@obs_datetime) THEN
 
             SET my_pill_count = drug_pill_count(my_patient_id, my_drug_id, my_obs_datetime);
 
             SET @expiry_date = ADDDATE(my_start_date, ((my_quantity + my_pill_count)/my_daily_dose));
->>>>>>> 9f04c639eec033f4079dba4a7c4fc4cef49ad56e
 
 			IF my_expiry_date IS NULL THEN
 				SET my_expiry_date = @expiry_date;
@@ -441,18 +392,6 @@ BEGIN
 
 			IF @expiry_date < my_expiry_date THEN
 				SET my_expiry_date = @expiry_date;
-<<<<<<< HEAD
-				END IF;
-				END IF;
-			END LOOP;
-
-			IF DATEDIFF(my_end_date, my_expiry_date) > 56 THEN
-				SET flag = 1;
-			END IF;
-	RETURN flag;
-END */;;
-DELIMITER ;
-=======
             END IF;
         END IF;
     END LOOP;
@@ -524,7 +463,6 @@ BEGIN
 	RETURN my_pill_count;
 END */;;
 DELIMITER ;
->>>>>>> 9f04c639eec033f4079dba4a7c4fc4cef49ad56e
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
@@ -665,26 +603,16 @@ BEGIN
 		WHERE encounter_type = my_encounter_type_id 
 			AND voided = 0
 			AND patient_id = my_patient_id 
-<<<<<<< HEAD
 			AND encounter_datetime <= ADDDATE(DATE(my_earliest_start_date), 1)
 		ORDER BY encounter_datetime DESC LIMIT 1;
 
-=======
-			AND encounter_datetime <= ADDDATE(DATE(my_earliest_start_date), 1)
-		ORDER BY encounter_datetime DESC LIMIT 1;
-
->>>>>>> 9f04c639eec033f4079dba4a7c4fc4cef49ad56e
 	IF my_encounter_id IS NULL THEN
 		SELECT encounter_id INTO my_encounter_id FROM encounter 
 			WHERE encounter_type = my_encounter_type_id 
 				AND voided = 0
 				AND patient_id = my_patient_id 
 				AND encounter_datetime <= my_end_date 
-<<<<<<< HEAD
                 AND encounter_datetime >= ADDDATE(DATE(my_earliest_start_date), 1)
-=======
-                AND encounter_datetime >= ADDDATE(DATE(my_earliest_start_date), 1)
->>>>>>> 9f04c639eec033f4079dba4a7c4fc4cef49ad56e
 			ORDER BY encounter_datetime LIMIT 1;
 	END IF;
 

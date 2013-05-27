@@ -1,7 +1,6 @@
 <style type="text/css">
   body {
     -moz-user-select:none;
-	font-family: Arial,sans-serif;
   }
 
   #stats {
@@ -26,9 +25,6 @@
     overflow: hidden;
   }
 
-  #tab {
-    -moz-user-select:none;
-  }
 </style>
 <div id="tab" style="">
   <h2>Current patient statistics</h2>
@@ -44,7 +40,7 @@
       </tr>
       <% @types.each do |type| %>
         <tr class="<%= cycle('even', 'odd') %>">
-          <td style="text-align:left;"><%= type.capitalize.humanize.gsub('hiv','HIV').gsub('Hiv','HIV').gsub('art','ART').gsub('Art','ART') %></td>
+          <td style="text-align:left;"><%= type.capitalize %></td>
           <td><%= @me[type].to_i %></td>
           <td><%= @today[type].to_i %></td>
           <td><%= @year[type].to_i %></td>

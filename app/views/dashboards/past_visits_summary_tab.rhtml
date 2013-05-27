@@ -1,0 +1,212 @@
+<script>
+  var tt_cancel_destination = "/encounters/new/registration?patient_id=<%=@patient.id%>"
+</script>
+
+<style>
+  body {
+    -moz-user-select:none;
+  }
+
+  .charts {
+    padding-left:20px;
+    -moz-user-select:none;
+  }
+
+  #header {
+    padding-left:10px;
+    -moz-user-select:none;
+  }
+  
+  th {
+    text-align:left;
+    -moz-user-select:none;
+  }
+
+  #cancelhButton {
+    float:left;
+    -moz-user-select:none;
+  }
+
+  .messageBar {
+    background-color: tomato;
+    font-size: 2em;
+    left: 270px;
+    position: absolute;
+    text-align: center;
+    top: 10px;
+    width: 450px;
+    z-index: 999;
+    display:none;
+    height:210px;
+    -moz-user-select:none;
+  }
+
+  a {
+    background-color: grey;
+    border-bottom: 1px outset black;
+    border-style: outset;
+    border-top: 1px outset black;
+    color: white;
+    display: block;
+    padding: 0px 0px 0px 0px;
+    text-align: center;
+    text-decoration: none;
+    width: 300px;
+    -moz-user-select:none;
+  }
+  
+  .visit-summary{
+    text-align: right;
+    font-size:  1.5em;
+    padding-left:20px;
+</style>
+
+<%
+  task = @task
+  next_task = task.encounter_type.gsub('_',' ') rescue nil
+
+  xray = Observation.find(Observation.find(:last,                       
+            :conditions => ["person_id = ? AND concept_id = ?",                      
+            @person.id, ConceptName.find_by_name("Refer to x-ray?").concept_id,  
+            ])).to_s.strip.squish.upcase rescue '' 
+
+  refered_to_htc = Observation.find(Observation.find(:last,                       
+            :conditions => ["person_id = ? AND concept_id = ?",                      
+            @person.id, ConceptName.find_by_name("Refer to HTC").concept_id,  
+            ])).to_s.strip.squish.upcase rescue '' 
+%>
+
+<%= javascript_include_tag "jquery" %>
+<%= javascript_include_tag "jquery.flot" %>
+<%= javascript_include_tag "prototype" %>
+<script>
+
+  function cancel(){ document.location = "/clinic" }
+
+  function changeAttributes(){
+    buttonsdiv = document.getElementById('buttons')
+    buttonsdiv.innerHTML+="<button onmousedown='cancel();' id='cancelhButton' class='button red left'><span>Cancel</span></button>";
+    conntinue = document.getElementById('finishButton')
+    conntinue.innerHTML = '<span>Continue</span>'
+    conntinue.setAttribute('onmousedown','continueToNext();')
+
+    <% if refered_to_htc.match(/: Yes/i) %>
+      conntinue.setAttribute("onmousedown","gotoUpdateHIVstatus();")
+    <% end %>
+
+    <%if Location.current_location.name.match(/HIV|ART/i) and not Location.current_location.name.match(/Reception/i)%>
+      weightGraph();
+    <%end%>
+  }
+
+  function continueToNext(){
+    <%#if @patient_bean.archived_filing_number.blank? %>
+      go();
+    <%#else%>
+      messageBar = document.getElementById("messageBar");
+      messageBar.style.display = 'block';
+    <%#end%>
+  }
+
+  function setNewFilingNumber() { 
+    document.location = "/patients/set_new_filing_number/<%=@patient.id%>"
+  }
+
+  function hideMessage() { 
+    messageBar = document.getElementById("messageBar");
+    messageBar.style.display = 'none';
+  }
+
+  function go() {
+    submit_form = $('confirm');
+    submit_form.action = "<%#= task.url %>"
+    submit_form.submit();
+  }
+
+
+  function submitPage(patient_id,concept_name) {
+     submitForm = document.getElementById("confirm");
+    
+     newElement = document.createElement("input");                             
+     newElement.setAttribute("name","encounter[encounter_type_name]");                 
+     newElement.setAttribute("type","hidden");                                 
+     newElement.value = "EXAMINATION";      
+     submitForm.appendChild(newElement);
+
+     newElement = document.createElement("input");                             
+     newElement.setAttribute("name","encounter[patient_id]");                 
+     newElement.setAttribute("type","hidden");                                 
+     newElement.value = "<%=@patient.id%>";      
+     submitForm.appendChild(newElement);
+
+     newElement = document.createElement("input");                             
+     newElement.setAttribute("name","encounter[provider_id]");                 
+     newElement.setAttribute("type","hidden");                                 
+     newElement.value = "<%=current_user.id%>";      
+     submitForm.appendChild(newElement);
+
+     newElement = document.createElement("input");                             
+     newElement.setAttribute("name","observations[][concept_name]");                 
+     newElement.setAttribute("type","hidden");                                 
+     newElement.value = concept_name;      
+     submitForm.appendChild(newElement);
+
+     newElement = document.createElement("input");                             
+     newElement.setAttribute("name","observations[][patient_id]");                 
+     newElement.setAttribute("type","hidden");                                 
+     newElement.value = "<%=@patient.id%>";      
+     submitForm.appendChild(newElement);
+
+     newElement = document.createElement("input");                             
+     newElement.setAttribute("name","observations[][value_coded_or_text]");                 
+     newElement.setAttribute("type","hidden");                                 
+     newElement.value = "NO";      
+     submitForm.appendChild(newElement);
+
+     submitForm.action = "/encounters/create"
+     submitForm.submit(); 
+  }
+
+  function gotoUpdateHIVstatus() {
+    window.location = "/encounters/new/update_hiv_status?patient_id=<%=@patient.id%>"
+  }
+</script>
+
+<body onload = "setTimeout('changeAttributes()',500);">
+
+<form method='post' action="/people/confirm" id = "confirm">
+  <%= hidden_field_tag(:found_person_id, @found_person_id) %>
+  <%= hidden_field_tag(:relation, @relation) %>
+</form>
+<div id ='header'>
+ 
+<% if !@services.blank? %>	
+	<div class="visit-summary">
+  
+		<table cellpadding ="5" cellspacing="5" align="center">
+			<tr style = "font-size:20px;">
+				<th>Previous Service</th>
+				<th></th>
+				<th>Service Date</th>
+			</tr>
+			<% @services.each do |service| %>
+				<tr>
+					<td style="float:left;">
+						<%= service.value_text %>
+					</td>
+					<td></td>
+					<td align="center">
+						<%= service.obs_datetime.to_date %>
+					</td>
+				</tr>
+			<% end %>
+		</table>
+	</div>
+<% else %>
+	<table cellpadding ="5" cellspacing="5" align="center">
+			<tr style = "font-size:20px;">
+				<th><h4>No previous service for this patient</h4></th>
+			</tr>
+	</table>
+<% end %>
+</body>

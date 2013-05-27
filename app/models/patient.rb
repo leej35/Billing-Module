@@ -3,6 +3,7 @@ class Patient < ActiveRecord::Base
   set_primary_key "patient_id"
   include Openmrs
   has_one :account
+
   has_one :person, :foreign_key => :person_id, :conditions => {:voided => 0}
   has_many :patient_identifiers, :foreign_key => :patient_id, :dependent => :destroy, :conditions => {:voided => 0}
   has_many :patient_programs, :conditions => {:voided => 0}

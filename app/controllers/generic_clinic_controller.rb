@@ -5,9 +5,11 @@ class GenericClinicController < ApplicationController
 
     @location = Location.find(session[:location_id]).name rescue ""
 
-    @date = (session[:datetime].to_date rescue Date.today).strftime("%Y-%m-%d")
+    @date = session[:datetime].to_date rescue Date.today.to_date
 
-    @user = current_user.name rescue ""
+		@person = Person.find_by_person_id(current_user.person_id)
+
+    @user = PatientService.name(@person)
 
     @roles = current_user.user_roles.collect{|r| r.role} rescue []
 
@@ -77,7 +79,7 @@ class GenericClinicController < ApplicationController
     render :template => 'clinic/administration', :layout => 'clinic' 
   end
 
-  def overview_tab
+	def overview_tab
     simple_overview_property = CoreService.get_global_property_value("simple_application_dashboard") rescue nil
 
     simple_overview = false
@@ -86,83 +88,115 @@ class GenericClinicController < ApplicationController
         simple_overview = true
       end
     end
+		
+		@session_date = Date.today.to_date
+		
+		if session[:datetime]
+			@session_date = session[:datetime].to_date
+		end
 
-    @types = CoreService.get_global_property_value("statistics.show_encounter_types") rescue EncounterType.all.map(&:name).join(",")
-    @types = @types.split(/,/).delete_if.each{|t|t.match(/Registration/i)}
-    @types.delete_if.each{|t|t.match(/Appointment/i)}
-    #@types
+    @types = EncounterType.all.map{|encounter_type| encounter_type.name if encounter_type.name == "REGISTRATION"}.to_s
 
+    @current_user_id = current_user.user_id
 
-    @me = Encounter.statistics(@types,:joins => {:patient =>{:person => {}}},
-      :conditions => ['encounter_datetime BETWEEN ? AND ? AND encounter.creator = ?',
-                      Date.today.strftime('%Y-%m-%d 00:00:00'), Date.today.strftime('%Y-%m-%d 23:59:59'),
-                      current_user.user_id])
-    @me_below_14 = Encounter.statistics(@types,:joins => {:patient =>{:person => {}}},
-      :conditions => ['DATEDIFF(NOW(), person.birthdate)/365 < ? AND encounter_datetime BETWEEN ? AND ? AND encounter.creator = ?',
-                      14, Date.today.strftime('%Y-%m-%d 00:00:00'),Date.today.strftime('%Y-%m-%d 23:59:59'),
-                      current_user.user_id])
+    @me = Encounter.patient_registration(@types, @current_user_id, :conditions => ['DATE(patient.date_created) = DATE(NOW()) AND patient.creator = ?', current_user.user_id])
 
-    @me_above_14 = Encounter.statistics(@types,:joins => {:patient =>{:person => {}}},
-      :conditions => ['DATEDIFF(NOW(), person.birthdate)/365 >= ? AND encounter_datetime BETWEEN ? AND ? AND encounter.creator = ?',
-                      14, Date.today.strftime('%Y-%m-%d 00:00:00'),Date.today.strftime('%Y-%m-%d 23:59:59'),
-                      current_user.user_id])
-
-    @today = Encounter.statistics(@types,
-      :conditions => ['encounter_datetime BETWEEN ? AND ?',
-                      Date.today.strftime('%Y-%m-%d 00:00:00'),
-                      Date.today.strftime('%Y-%m-%d 23:59:59')])
-    @today_below_14 = Encounter.statistics(@types,:joins => {:patient =>{:person => {}}},
-      :conditions => ['DATEDIFF(NOW(), person.birthdate)/365 < ? AND encounter_datetime BETWEEN ? AND ?',
-                      14, Date.today.strftime('%Y-%m-%d 00:00:00'), Date.today.strftime('%Y-%m-%d 23:59:59')])
-
-    @today_above_14 = Encounter.statistics(@types,:joins => {:patient =>{:person => {}}},
-      :conditions => ['DATEDIFF(NOW(), person.birthdate)/365 >= ? AND encounter_datetime BETWEEN ? AND ?',
-                      14, Date.today.strftime('%Y-%m-%d 00:00:00'), Date.today.strftime('%Y-%m-%d 23:59:59')])
-    @me_reg_below_14 = Patient.find(:all,:joins => [:person], :conditions => ['DATEDIFF(NOW(),
-       person.birthdate)/365 < ? AND DATE(patient.date_created) =? AND patient.creator =? ',
-        14, Date.today, current_user.user_id]).count
-    @me_reg_above_14 = Patient.find(:all,:joins => [:person], :conditions => ['DATEDIFF(NOW(), 
-       person.birthdate)/365 >= ? AND DATE(patient.date_created) =? AND patient.creator =? ',
-        14, Date.today, current_user.user_id]).count
-    @today_reg_below_14 = Patient.find(:all,:joins => [:person], :conditions => ['DATEDIFF(NOW(),
-       person.birthdate)/365 < ? AND DATE(patient.date_created) =?', 14, Date.today]).count
-    @today_reg_above_14 = Patient.find(:all,:joins => [:person], :conditions => ['DATEDIFF(NOW(),
-       person.birthdate)/365 >= ? AND DATE(patient.date_created) =? ', 14, Date.today]).count
+    @today = Encounter.patient_registration_total(@types, :conditions => ['DATE(date_created) = DATE(NOW())'])
     
-    @me_ret_pt_below_14 =  Encounter.find(:all, :joins => [:type, [:patient => :person] ],
-      :group=>'patient.patient_id', :conditions => ['encounter_type_id IN (?) AND 
-       DATE(patient.date_created) <> ? AND DATE(encounter.encounter_datetime) =?  AND
-       encounter.creator = ? AND DATEDIFF(NOW(),person.birthdate)/365 < ?',
-       EncounterType.find(:all, :conditions => ['name IN (?)',@types]).map(&:encounter_type_id), 
-       Date.today, Date.today,current_user.user_id,14] ).count
-     #raise  @me_ret_pt_below_14.inspect
-    @me_ret_pt_above_14 =  Encounter.find(:all, :joins => [:type, [:patient => :person] ],
-      :group=>'patient.patient_id', :conditions => ['encounter_type_id IN (?) AND 
-       DATE(patient.date_created) <> ? AND DATE(encounter.encounter_datetime) =?  AND
-       encounter.creator = ? AND DATEDIFF(NOW(),person.birthdate)/365 >= ?',
-       EncounterType.find(:all, :conditions => ['name IN (?)',@types]).map(&:encounter_type_id), 
-       Date.today, Date.today,current_user.user_id,14] ).count
-    @ret_pt_below_14 =  Encounter.find(:all, :joins => [:type, [:patient => :person] ],
-      :group=>'patient.patient_id', :conditions => ['encounter_type_id IN (?) AND
-       DATE(patient.date_created) <> ? AND DATE(encounter.encounter_datetime) =? AND DATEDIFF(NOW(),person.birthdate)/365 < ?',
-       EncounterType.find(:all, :conditions => ['name IN (?)',@types]).map(&:encounter_type_id),
-       Date.today, Date.today,14] ).count
-
-     @ret_pt_above_14 =  Encounter.find(:all, :joins => [:type, [:patient => :person] ],
-      :group=>'patient.patient_id', :conditions => ['encounter_type_id IN (?) AND
-       DATE(patient.date_created) <> ? AND DATE(encounter.encounter_datetime) =? AND DATEDIFF(NOW(),person.birthdate)/365 >= ?',
-       EncounterType.find(:all, :conditions => ['name IN (?)',@types]).map(&:encounter_type_id),
-       Date.today, Date.today,14] ).count
-   
     if !simple_overview
-      @year = Encounter.statistics(@types,
-        :conditions => ['encounter_datetime BETWEEN ? AND ?',
-                        Date.today.strftime('%Y-01-01 00:00:00'),
-                        Date.today.strftime('%Y-12-31 23:59:59')])
+    	@types = CoreService.get_global_property_value("statistics.show_encounter_types") rescue EncounterType.all.map(&:name).join(",")
+    	@types = @types.split(/,/)
+
+    	@me = Encounter.statistics(@types, :conditions => ['DATE(encounter_datetime) = DATE(NOW()) AND encounter.creator = ?', current_user.user_id])
+   	 @today = Encounter.statistics(@types, :conditions => ['DATE(encounter_datetime) = DATE(NOW())'])
+
+    	
+      @year = Encounter.statistics(@types, :conditions => ['YEAR(encounter_datetime) = YEAR(NOW())'])
       @ever = Encounter.statistics(@types)
     end
 
-    @user = current_user.name  rescue "Me"
+    @person = Person.find_by_person_id(current_user.person_id)
+
+    @user = PatientService.name(@person)
+		
+		@services = PatientService.services(@current_user_id, @session_date)
+
+		@existing_patients_by_current_user = 0
+		@existing_patients_by_current_user = @services.length - @me['REGISTRATION'].to_i
+		
+		if @existing_patients_by_current_user < 0
+			@existing_patients_by_current_user = 0
+		end
+		
+		@casualty = []; @dental = []; @eye = []; @family_planing = []; @medical = []; @ob_gyn = [];
+		@orthopedics = []; @other = []; @pediatrics = []; @skin = []; @sti_clinic = []; @surgical = []
+
+ 		@services.each do |service|
+ 			if service.value_text.capitalize.include?("Casualty")
+ 				@casualty << service
+ 			elsif service.value_text.capitalize.include?("Dental")
+ 				@dental << service
+ 			elsif service.value_text.capitalize.include?("Eye")
+ 				@eye << service
+ 			elsif service.value_text.include?("Family Planing")
+ 				@family_planing << service
+ 			elsif service.value_text.capitalize.include?("Medical")
+ 				@medical << service
+ 			elsif service.value_text.include?("OB/Gyn")
+ 				@ob_gyn << service
+ 			elsif service.value_text.capitalize.include?("Orthopedics")
+ 				@orthopedics << service
+ 			elsif service.value_text.capitalize.include?("Pediatrics")
+ 				@pediatrics << service
+ 			elsif service.value_text.strip.include?("Skin")
+ 				@skin << service
+ 			elsif service.value_text.include?("STI Clinic")
+ 				@sti_clinic << service
+ 			elsif service.value_text.capitalize.include?("Surgical")
+ 				@surgical << service
+ 			else service.value_text.capitalize.include?(" Other ")
+ 				@other << service
+ 			end
+ 		end
+
+		@all_services = PatientService.all_services(@session_date)
+		
+		@existing_patients_by_all_users = 0
+		@existing_patients_by_all_users = PatientService.all_patient_services.length - @today['REGISTRATION'].to_i
+		if @existing_patients_by_all_users < 0
+			@existing_patients_by_all_users = 0
+		end
+		
+		@all_casualty = []; @all_dental = []; @all_eye = []; @all_family_planing = []; @all_medical = []; @all_ob_gyn = [];
+		@all_orthopedics = []; @all_other = []; @all_pediatrics = []; @all_skin = []; @all_sti_clinic = []; @all_surgical = []
+
+ 		@all_services.each do |service|
+ 			if service.value_text.capitalize.include?("Casualty")
+ 				@all_casualty << service
+ 			elsif service.value_text.capitalize.include?("Dental")
+ 				@all_dental << service
+ 			elsif service.value_text.capitalize.include?("Eye")
+ 				@all_eye << service
+ 			elsif service.value_text.include?("Family Planing")
+ 				@all_family_planing << service
+ 			elsif service.value_text.capitalize.include?("Medical")
+ 				@all_medical << service
+ 			elsif service.value_text.include?("OB/Gyn")
+ 				@all_ob_gyn << service
+ 			elsif service.value_text.capitalize.include?("Orthopedics")
+ 				@all_orthopedics << service
+ 			elsif service.value_text.capitalize.include?("Pediatrics")
+ 				@all_pediatrics << service
+ 			elsif service.value_text.strip.include?("Skin")
+ 				@all_skin << service
+ 			elsif service.value_text.include?("STI Clinic")
+ 				@all_sti_clinic << service
+ 			elsif service.value_text.capitalize.include?("Surgical")
+ 				@all_surgical << service
+ 			else service.value_text.capitalize.include?(" Other ")
+ 				@all_other << service
+ 			end
+ 		end
 
     if simple_overview
         render :template => 'clinic/overview_simple.rhtml' , :layout => false
@@ -173,21 +207,14 @@ class GenericClinicController < ApplicationController
 
   def reports_tab
     @reports = [
-      ["Cohort","/cohort_tool/cohort_menu"],
-      ["Supervision","/clinic/supervision_tab"],
-      ["Data Cleaning Tools", "/clinic/data_cleaning_tab"],
-      ["View appointments","/report/select_date"]
+      ["Registry reports","/cohort_tool/cohort_menu"]
     ]
 
     @reports = [
       ["Diagnosis","/drug/date_select?goto=/report/age_group_select?type=diagnosis"],
-     # ["Patient Level Data","/drug/date_select?goto=/report/age_group_select?type=patient_level_data"],
       ["Disaggregated Diagnosis","/drug/date_select?goto=/report/age_group_select?type=disaggregated_diagnosis"],
       ["Referrals","/drug/date_select?goto=/report/opd?type=referrals"],
-      #["Total Visits","/drug/date_select?goto=/report/age_group_select?type=total_visits"],
-      #["User Stats","/drug/date_select?goto=/report/age_group_select?type=user_stats"],
       ["User Stats","/"],
-     # ["Total registered","/drug/date_select?goto=/report/age_group_select?type=total_registered"],
       ["Diagnosis (By address)","/drug/date_select?goto=/report/age_group_select?type=diagnosis_by_address"],
       ["Diagnosis + demographics","/drug/date_select?goto=/report/age_group_select?type=diagnosis_by_demographics"]
     ] if Location.current_location.name.match(/Outpatient/i)
@@ -228,13 +255,9 @@ class GenericClinicController < ApplicationController
 
   def administration_tab
     @reports =  [
-                  ['/clinic/users_tab','User Accounts/Settings'],
+                  ['/clinic/users_tab','User Accounts'],
                   ['/clinic/location_management_tab','Location Management'],
-                  #['/people/tranfer_patient_in','Transfer Patient in']
                 ]
-    if current_user.admin?
-      @reports << ['/clinic/management_tab','Drug Management']
-    end
     @landing_dashboard = 'clinic_administration'
     render :layout => false
   end

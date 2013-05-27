@@ -8,9 +8,12 @@ class GenericSessionsController < ApplicationController
 
 	def create
 		user = User.authenticate(params[:login], params[:password])
-		sign_in(:user, user) if user && user.status == 'active'
-		authenticate_user! if user && user.status == 'active' 
+		sign_in(:user, user) if user
+		authenticate_user! if user
+
 		session[:return_uri] = nil
+		session[:datetime] = nil
+
 		if user_signed_in?
 			current_user.reset_authentication_token
 			#my_token = current_user.authentication_token

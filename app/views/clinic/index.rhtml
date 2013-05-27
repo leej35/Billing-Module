@@ -4,7 +4,7 @@
     <script type="text/javascript" language="javascript" src="/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer ></script>
     <meta http-equiv='content-type' content='text/html;charset=UTF-8' />
     <script language="javascript">
-      tstUsername = "<%= current_user rescue "" %>";
+      tstUsername = "<%= User.current_user rescue "" %>";
       tstCurrentDate = "<%= @date %>";
       tt_cancel_destination = '/logout';
       tt_cancel_show = '/people/search';
@@ -19,23 +19,20 @@
             </tr>
             <h1 id='project_name'>
               <div style="font-size: 0.8em; margin-top: 28px;">
-                <%location_name = (@location.downcase == "outpatient" ? "OPD" : "OPD") 
-                  if current_user.activities.include?('Manage Lab Orders') or current_user.activities.include?('Manage Lab Results') or
-                  current_user.activities.include?('Manage Sputum Submissions') or current_user.activities.include?('Manage TB Clinic Visits') or
-                  current_user.activities.include?('Manage TB Reception Visits') or current_user.activities.include?('Manage TB Registration Visits') or
-                  current_user.activities.include?('Manage HIV Status Visits') %>
-                    <span style="font-size: 55px;">OPD</span>
-                <%else%>
-                  <%= location_name %>
-               <%end%>
+                  PR
               </div>
             </h1>
 
-            <div id="facility"><%= @facility %></div>
+            <div id="facility">Kamuzu central hospital<%#= @facility %></div>
             <div id="location"><%= @location %></div>
             <% retrospective = 'false'
-               retrospective = 'true' if session[:datetime]
+               if session[:datetime]
+               	if session[:datetime].to_date != Date.today.to_date
+               		retrospective = 'true'
+               	end 
+               end
             %>
+
             <div id="date" retrospective="<%= retrospective %>"><%= @date %></div>
             <div id="user"><%= @user %></div>
 
@@ -53,27 +50,24 @@
             <select id="links">
 
               <option value='/logout' link='/logout'>Logout</option>
-<%# Show Find / Register Patient button on HIV Reception and Find by Name button
-on the rest of the stations %>
+              <option value='/people/search' link='/people/search' ttSize="300px">Find or Register Patient</option>
 
-              <%# if @location =~ /HIV Reception/ %>
-                <option value='/people/search' link='/people/search' ttSize="295px">Find or Register Patient</option>
-              <%# else %>
-                <!--<option value='/people/search' link='/people/search' ttSize="200px">Find By Name</option>-->
-              <%# end %>
-
-<%# Hide Find by ARV Number button on non-HIV workstations %>
-              <% if @location =~ /HIV/ %>
-                <option value="/people/find_by_arv_number" ttSize="265px">Find By ARV Number</option>
-              <% end %>
               <% if development_environment? %>
-                <option value='/location?from=clinic' ttSize="100px">Swap Desk</option>
+                <option value='/location?from=clinic' ttSize="150px">Swap Desk</option>
               <% end %>
 
-              <option value='<%= ((session[:datetime].to_date rescue '') != '' ?
-                          "/people/reset_datetime" : "/people/set_datetime") %>'  ttSize="100px">
-                <%= ((session[:datetime].to_date rescue '') != '' ? "Reset Date" : "Set Date") %></option>
-              <!--option link='regimen.html'>Regimen</option-->
+							<%
+								session_datetime = ''
+								if session[:datetime]
+		             	if session[:datetime].to_date != Date.today.to_date
+		             		session_datetime = session[:datetime].to_date
+		             	end 
+               	end
+							%>
+
+              <option value='<%= ((session_datetime.to_date rescue '') != '' ?
+                          "/people/reset_datetime" : "/people/set_datetime") %>'  ttSize="150px">
+                <%= ((session_datetime.to_date rescue '') != '' ? "Reset Date" : "Set Date") %></option>
             </select>
             <tr>
               <td align='center'>

@@ -32,13 +32,21 @@
               <th colspan=2>Patient Programs Dashboard</th>
             </tr>
             <h1 id='project_name'>
-				OPD
+               <%if current_program_location == "TB program"%>
+                 <span style="font-size: 55px;">TB-ART</span>                   
+               <%else%>                                                         
+                 BART                                                           
+               <%end%>
             </h1>
 
             <span id='patient_name'><%= @patient_bean.name rescue "" %></span>
             <span id='patient_id'><%= @patient_bean.national_id_with_dashes rescue "" %></span>
             <span id='patient_residence'><%= @patient_bean.current_residence rescue "" %></span>
-            <span id='patient_age'><%= @patient_bean.age rescue "" %></span>
+            <% if @patient_bean.age > 0 %>
+                <span id='patient_age'><%= @patient_bean.age rescue "" %></span>
+            <% else %>
+                <span id='patient_age'><%= "#{@patient_bean.age_in_months} Months" rescue "" %></span>
+            <% end %>
             <span id='patient_gender'><%= @patient_bean.sex rescue "" %></span>
 
             <div id="patient_card">
@@ -47,7 +55,7 @@
                  <span value="<%= @reason_for_art_eligibility rescue "" %>">Reason for Starting</span>
                <% end %>
 
-               <% if (@arv_number rescue nil) != nil && (@arv_number) != " " && allowed_hiv_viewer %>
+               <% if (@arv_number rescue nil) != nil && (@arv_number) != " " %>
 
                   <span value="<%= @arv_number rescue "" %>">ARV Number</span>
 

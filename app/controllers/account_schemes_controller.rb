@@ -25,6 +25,7 @@ class AccountSchemesController < ApplicationController
   # GET /account_schemes/new.xml
   def new
     @account_scheme = AccountScheme.new
+
     respond_to do |format|
       format.html # new.html.erb
       format.xml  { render :xml => @account_scheme }
@@ -40,11 +41,11 @@ class AccountSchemesController < ApplicationController
   # POST /account_schemes.xml
   def create
     @account_scheme = AccountScheme.new(params[:account_scheme])
-	@account = Account.find(@account_scheme.account_id)
+
     respond_to do |format|
       if @account_scheme.save
         flash[:notice] = 'AccountScheme was successfully created.'
-        format.html { redirect_to(@account) }
+        format.html { redirect_to(@account_scheme) }
         format.xml  { render :xml => @account_scheme, :status => :created, :location => @account_scheme }
       else
         format.html { render :action => "new" }
@@ -56,7 +57,7 @@ class AccountSchemesController < ApplicationController
   # PUT /account_schemes/1
   # PUT /account_schemes/1.xml
   def update
-	@account_scheme = AccountScheme.find(params[:id])
+    @account_scheme = AccountScheme.find(params[:id])
 
     respond_to do |format|
       if @account_scheme.update_attributes(params[:account_scheme])
@@ -73,17 +74,11 @@ class AccountSchemesController < ApplicationController
   # DELETE /account_schemes/1
   # DELETE /account_schemes/1.xml
   def destroy
-#     @account_scheme = AccountScheme.find_all_by_account_id_and_medical_scheme_id(params[:account_id],params[:medical_scheme_id])
-	@account_scheme = AccountScheme.find(params[:id])
-
-# 	raise @account_scheme.inspect
-
-	@account = Account.find(@account_scheme.account_id)
-
+    @account_scheme = AccountScheme.find(params[:id])
     @account_scheme.destroy
 
     respond_to do |format|
-      format.html { redirect_to(@account) }
+      format.html { redirect_to(account_schemes_url) }
       format.xml  { head :ok }
     end
   end

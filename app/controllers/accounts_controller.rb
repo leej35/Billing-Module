@@ -22,38 +22,6 @@ class AccountsController < ApplicationController
 
 	@items_paid = Item.find_all_by_account_id_and_is_paid(@account.id,1)
 	@items_unpaid = Item.find_all_by_account_id_and_is_paid(@account.id,0)
-	
-	#     @medical_schemes = MedicalScheme.find_all_by_id(account_schemes.medical_scheme_id)
-
-# #     
-#     account_schemes = []
-#     raise @medical_schemes.to_yaml
-# 
-#     
-#     @account_schemes.each do |account_scheme|
-#       @account_schemes << account_scheme
-#     end
-#  	
-#  	medical_schemes = []
-# 
-#     account_schemes.each do |account_scheme|
-#       medical_schemes << account_scheme.medical_schemes
-#     end
-# 
-    
-    
-    
-    
-#     
-#     
-#     @schemes = MedicalScheme.find(@account_schemes.medical_scheme_id)
-#     
-#     @schemes.detect{|medicalscheme| medicalscheme.id = @scheme.medical_scheme_id}
-#     
-#     @rules.detect{|rule| rule.product_id == @item.product_id}
-#     
-#     services_array = Service.all.map { |service| [service.name, service.product_id]
-#     
      
     respond_to do |format|
       format.html # show.html.erb

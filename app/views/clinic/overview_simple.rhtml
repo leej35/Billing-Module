@@ -1,17 +1,14 @@
 <style type="text/css">
-  body {
+ body {
     -moz-user-select:none;
 	font-family: Arial,sans-serif;
   }
 
   #stats {
     width:98%;
-    border:none;
+    border:1px solid #eee;
     margin:10px;
     background:white;
-    top:2em;
-    position: absolute;
-    left: 0em;
   }
   #stats td, #stats th {
     text-align:center;
@@ -22,67 +19,125 @@
 
   #table_div {
     overflow:auto;
-    height: 340px;
+    height: 320px;
     background-color: white;
-    border: none;
+    border: solid 1px #eee;
     border-width: 1px;
-    overflow: hidden;
+    
   }
-  .header{
-    background-color: #669999;
-    border-bottom: 1px outset black;
-    border-top: 1px outset black;
-}
-h2{
-  position: absolute;
-  top: -1em;
-  left: 14em;
-}
+
 </style>
-<div id="tab" style="margin-top:24px">
+<div id="tab" style="">
   <h2>Current patient statistics</h2>
     <div id="table_div">
 
     <table id="stats" cellpadding="14">
-      <tr>
-        <th >&nbsp;</th>
-         <th class="header" colspan="2"  style="color: #fff"><%= @user rescue 'Me'%></th>
-         <th class="header" colspan="2"  style="color: #fff">Today</th>
-      </tr>
-      <tr  " style="color: #fff; background-color: #666;">
-        <th class="header" style="text-align:left;">Task Type</th>
-        <!--<th><%= @user rescue 'Me'%></th>-->
-         <th class="header">14 and below</th>
-         <th class="header">Above 14</th>
-         <th class="header">14 and below</th>
-         <th class="header">Above 14</th>
-        <!--<th>Today</th>-->
-       <!-- <th>This Year</th>
-        <th>Total to Date</th> -->
-      </tr>
-      <tr  class="<%= cycle('even', 'odd') %>">
-          <td style="text-align:left;">New registration </td>
-          <td><%= @me_reg_below_14 %></td>
-          <td><%=@me_reg_above_14 %></td>
-          <td><%=@today_reg_below_14 %></td>
-          <td><%=@today_reg_above_14 %></td>
-      </tr>
-      <tr  class="<%= cycle('even', 'odd') %>">
-          <td style="text-align:left;">Returning patients </td>
-          <td><%= @me_ret_pt_below_14 %></td>
-          <td><%= @me_ret_pt_above_14 %></td>
-          <td><%= @ret_pt_below_14 %></td>
-          <td><%= @ret_pt_above_14  %></td>
+      <tr style="color: #fff; background-color: #4A708B;">
+        <th style="text-align:left;">Task Type</th>
+        <th>Me</th>
+        <th>Today</th>
       </tr>
       <% @types.each do |type| %>
         <tr class="<%= cycle('even', 'odd') %>">
-          <td style="text-align:left;"><%= type.capitalize.humanize.gsub('hiv','HIV').gsub('Hiv','HIV').gsub('art','ART').gsub('Art','ART') %></td>
-          <td><%= @me_below_14[type].to_i %></td>
-          <td><%= @me_above_14[type].to_i %></td>
-          <td><%= @today_below_14[type].to_i %></td>
-          <td><%= @today_above_14[type].to_i %></td>
+          <td style="text-align:left;">Newly registered patients<%#= type.capitalize %></td>
+          <td><%= @me[type].to_i %></td>
+          <td><%= @today[type].to_i %></td>
         </tr>
       <% end %>
+
+      <tr class="<%= cycle('even', 'odd') %>">
+        <td style="text-align:left;">Returning patients</td>
+        <td><%= @existing_patients_by_current_user %></td>
+        <td><%= @existing_patients_by_all_users %></td>
+      </tr>
+
+
+      <%# if !@casualty.blank? %>
+      		<tr class="<%= cycle('even', 'odd') %>">
+		        <td style="text-align:left;">Casualty</td>
+		        <td><%= @casualty.length.to_i %></td>
+		        <td><%= @all_casualty.length.to_i %></td>
+        	</tr>
+       <%# end %>
+        <%# if !@dental.blank? %>
+      		<tr class="<%= cycle('even', 'odd') %>">
+		        <td style="text-align:left;">Dental</td>
+		        <td><%= @dental.length.to_i %></td>
+		        <td><%= @all_dental.length.to_i %></td>
+        	</tr>
+        <%# end %>
+        <%# if !@eye.blank? %>
+      		<tr class="<%= cycle('even', 'odd') %>">
+		        <td style="text-align:left;">Eye</td>
+		        <td><%= @eye.length.to_i %></td>
+		        <td><%= @all_eye.length.to_i %></td>
+        	</tr>
+        <%# end %>
+      	<%# if !@family_planing.blank? %>
+      		<tr class="<%= cycle('even', 'odd') %>">
+		        <td style="text-align:left;">Family planing</td>
+		        <td><%= @family_planing.length.to_i %></td>
+		        <td><%= @all_family_planing.length.to_i %></td>
+        	</tr>
+        <%# end %>
+        <%# if !@medical.blank? %>
+      		<tr class="<%= cycle('even', 'odd') %>">
+		        <td style="text-align:left;">Medical</td>
+		        <td><%= @medical.length.to_i %></td>
+		        <td><%= @all_medical.length.to_i %></td>
+        	</tr>
+        <%# end %>
+        <%# if !@ob_gyn.blank? %>
+      		<tr class="<%= cycle('even', 'odd') %>">
+		        <td style="text-align:left;">OB/Gyn</td>
+		        <td><%= @ob_gyn.length.to_i %></td>
+		        <td><%= @all_ob_gyn.length.to_i %></td>
+        	</tr>
+        <%# end %>
+        <%# if !@orthopedics.blank? %>
+      		<tr class="<%= cycle('even', 'odd') %>">
+		        <td style="text-align:left;">Orthopedics</td>
+		        <td><%= @orthopedics.length.to_i %></td>
+		        <td><%= @all_orthopedics.length.to_i %></td>
+        	</tr>
+        <%# end %>
+        <%# if !@pediatrics.blank? %>
+      		<tr class="<%= cycle('even', 'odd') %>">
+		        <td style="text-align:left;">Pediatrics</td>
+		        <td><%= @pediatrics.length.to_i %></td>
+		        <td><%= @all_pediatrics.length.to_i %></td>
+        	</tr>
+        <%# end %>
+        <%# if !@skin.blank? %>
+      		<tr class="<%= cycle('even', 'odd') %>">
+		        <td style="text-align:left;">Skin</td>
+		        <td><%= @skin.length.to_i %></td>
+		        <td><%= @all_skin.length.to_i %></td>
+        	</tr>
+        <%# end %>
+       <%# if !@sti_clinic.blank? %>
+      		<tr class="<%= cycle('even', 'odd') %>">
+		        <td style="text-align:left;">STI Clinic</td>
+		        <td><%= @sti_clinic.length.to_i %></td>
+		        <td><%= @all_sti_clinic.length.to_i %></td>
+        	</tr>
+        <%# end %>
+        <%# if !@surgical.empty? %>
+      		<tr class="<%= cycle('even', 'odd') %>">
+		        <td style="text-align:left;">Surgical</td>
+		        <td><%= @surgical.length.to_i %></td>
+		        <td><%= @all_surgical.length.to_i %></td>
+        	</tr>
+        <%# end %>
+        <%# if !@other.blank? %>
+      		<tr class="<%= cycle('even', 'odd') %>">
+		        <td style="text-align:left;">Other</td>
+		        <td><%= @other.length.to_i %></td>
+		        <td><%= @all_other.length.to_i %></td>
+        	</tr>
+        <%# else %>
+        <%# end %>
+ 
     </table>
   </div>
 </div>

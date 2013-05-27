@@ -6,7 +6,7 @@ one:
   price: 9.99
   service_type: MyString
   department: MyString
-  version: 
+  version: 1.5
 
 two:
   product_id: MyString
@@ -14,4 +14,4 @@ two:
   price: 9.99
   service_type: MyString
   department: MyString
-  version: 
+  version: 1.5

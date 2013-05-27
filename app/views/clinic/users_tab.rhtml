@@ -5,45 +5,36 @@
 @reports << ['Preffered keyboard',"/user/properties/#{current_user.id}"]
 
 if not Location.current_location.name.match(/Outpatient/i)
-  @reports << ['Activities',"/user/activities/#{current_user.id}"]
+  #@reports << ['Activities',"/user/activities/#{current_user.id}"]
 end
 if current_user.admin?
   @reports << ['Create user',"/user/new"]
   @reports << ['Edit user',"/user/select_user"]
-  @reports << ['Set user roles',"/user/users"]
-  @reports << ['Set related roles',"/user/set_role_role/#{current_user.id}"]
-  if current_user.program_manager?
-    @reports << ['View users',"/user/view_users"]
-  end
+	#@reports << ['Set user roles',"/user/users"]
+	#@reports << ['Set related roles',"/user/set_role_role/#{current_user.id}"]
 end
 %>
 
 
 <style type="text/css">
-  body {
-    -moz-user-select:none;
-	font-family: Arial,sans-serif;
-  }
-
   #stats {
     width:98%;
     margin:10px;
     background:white;
-    -moz-user-select:none;
   }
 
-	#stats a {
-		border-radius: 7px; 
-		background-color: #669999;
-		border-bottom: 1px outset black;
-		border-style: outset;
-		border-top: 1px outset black;
-		color: white;
-		display: block;
-		padding: 10px 16px 10px 10px;
-		text-align: center;
-		text-decoration: none;
-	}
+  #stats a {
+    border-radius: 7px;
+    background-color: #4A708B;
+    border-bottom: 1px outset black;
+    border-style: outset;
+    border-top: 1px outset black;
+    color: white;
+    display: block;
+    padding: 10px 16px 10px 10px;
+    text-align: center;
+    text-decoration: none;
+  }
 
   #stats td {
     width: 310px;
@@ -51,13 +42,13 @@ end
 
   #table_div {
     overflow:auto;
-    height: 280px;
+    height: 320px;
     background-color: white;
     border: 1px #eee solid;
     border-width: 1px;
   }
-</style>
 
+</style>
 
 <script>
   function setInnerHtmlData(id,result,path) {

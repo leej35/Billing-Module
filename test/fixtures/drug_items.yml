@@ -5,11 +5,11 @@ one:
   name: MyString
   price: 9.99
   drug_type: MyString
-  version: 
+  version: 1.5
 
 two:
   product_id: MyString
   name: MyString
   price: 9.99
   drug_type: MyString
-  version: 
+  version: 1.5

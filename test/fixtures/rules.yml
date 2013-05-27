@@ -3,7 +3,13 @@
 one:
   name: MyString
   rate: 1.5
+  medical_scheme_id: 9.99
+  product_type: MyString
+  product_id: MyString
 
 two:
   name: MyString
   rate: 1.5
+  medical_scheme_id: 9.99
+  product_type: MyString
+  product_id: MyString
