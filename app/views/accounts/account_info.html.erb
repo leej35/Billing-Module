@@ -1,0 +1,43 @@
+<% if params[:show] == "unpaid" %>
+	<p>
+	  <b>Items Unpaid</b></br>
+	  <% @items_unpaid.each do |item|%>
+	  <span><%=   item.name%></span>
+	  <span><%=   item.final_price%></span>
+	  <span><%=   item.is_paid%></span>
+	  
+	  <%= link_to 'Show', item %><br/>
+	  <% end %>
+	</p>
+
+<% elsif params[:show] == "paid" %>
+	<p>
+	  <b>Items Paid</b></br>
+	  <% @items_paid.each do |item|%>
+	  <span><%=   item.name%></span>
+	  <span><%=   item.final_price%></span>
+	  <span><%=   item.is_paid%></span>
+	  
+	  <%= link_to 'Show', item %><br/>
+	  <% end %>
+	</p>
+
+<% elsif params[:show] == "medical_schemes" %>	
+	<p>
+	  <b>Add medical scheme</b> <br/>
+	  <%= link_to 'Add Medical Scheme', :controller => "account_schemes", :action => "new", :account_id => @account %>
+	</p>
+	
+	<hr>
+	<p>
+	  <b>Medical Schemes</b><br/>
+	  <% @schemes_array.each do |medical_scheme|%>
+	  <%   account_scheme = AccountScheme.find_by_medical_scheme_id(medical_scheme.id)%>
+	  <%=  medical_scheme.name %>
+	  <%=  link_to 'Show', medical_scheme %>
+	  <%=  link_to 'Remove',  account_scheme, :confirm => 'Are you sure?', :method => :delete %><br/>
+	  <% end %>
+	</p>
+<% else %>
+	no proper parameter
+<% end %>

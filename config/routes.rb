@@ -13,7 +13,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :medical_schemes, :has_many => :rules
 
   map.resources :rules, :belongs_to => :medical_schemes
-
+  map.account_info 'accounts/account_info', :controller => 'accounts', :action => 'account_info'
   map.resources :accounts, :belongs_to => :patient, :has_many => :payments
   map.resources :account, :belongs_to => :patient, :has_many => :payments
 

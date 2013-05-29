@@ -1,48 +1,102 @@
-<h1>New item</h1>
-
-
-
-<% form_for(@item) do |f| %>
-  <%= f.error_messages %>
-  
-  
-  <%= f.hidden_field :account_id, :value => params[:account_id] %>
-  
-  <% if params[:type] == "service" %>  
-  <p>
-    Service:
-    <% services_array = Service.all.map { |service| [service.name, service.product_id] } %>
-    <%= options_for_select(services_array) %>
-    <%= f.select(:product_id, options_for_select(services_array)) %>
-  </p>
-  <% elsif params[:type] == "drug" %>
-  <p>
-    Drug:
-    <% drugitems_array = DrugItem.all.map { |drugitem| [drugitem.name, drugitem.product_id] } %>
-    <%= options_for_select(drugitems_array) %>
-    <%= f.select(:product_id, options_for_select(drugitems_array)) %>
-  </p>
-
-  <% elsif params[:type] == "admission" %>
-  <p>
-    Admission:
-    <%= f.hidden_field :account_id, :value => @admission.account_id %>
-    <%= f.hidden_field :product_id, :value => @admission.product_id %>
-    <%= f.hidden_field :original_price, :value => @admission.totalprice %> 
+<html>
+    <head>
+        <title>Registration</title>
+        <script type="text/javascript" language="javascript" src="/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer  ></script>
+        <meta http-equiv='content-type' content='text/html;charset=UTF-8' />
+        <script language="javascript">
+            tstUsername = "";
+            tstCurrentDate = "2010/03/12";
+            tt_cancel_destination = '../home.html';
+            tt_cancel_show = 'show.html';
+            
+            var today = new Date();
+            var y = today.getFullYear();
+            var m = padZeros((today.getMonth() + 1), 2);
+            var date0 = y + "-" + m + "-" + padZeros(today.getDate(), 2);
+            var date1 = y+"-"+m+"-10";
+            var date2 = y+"-"+m+"-26";
+            
+            var sel = {};
+            
+            function padZeros(number, positions){
+                var zeros = parseInt(positions) - String(number).length;
+                var padded = "";
     
-  </p>
-  <% else %>
-  <p>
-    Wrong parameter for type of service!<br/>
-    You should clarify type of item and account id<br/>
-    <i>e.g, items/new?type=service&account_id=1</i>
+                for(var i = 0; i < zeros; i++){
+                    padded += "0";
+                }
+    
+                padded += String(number);
+    
+                return padded;
+            }
 
-  </p>
-  <% end %>
-  
-  <p>
-    <%= f.submit 'Create' %>
-  </p>
-<% end %>
+            sel[date1] = 600;
+            sel[date2] = 4;
+            
+        </script>
+        <style>
+            .tt_unknown #SHIFT {
+                display: none;
+            }
+        </style>
+    </head>
+	
+	    <body><div id='content'>
+            <div id='description' style='color:#777;position:absolute;margin-top:-70px;'></div><center>
+                    <table cellpadding=10>
+                        <tr>
+                            <th colspan=2>Registration</th>
+                        </tr>
 
-<%= link_to 'Back', items_path %>
+                        
+                        <tr>
+                            <td>Item</td>
+                            <td>
+                            <% form_for(@item) do |f| %>
+
+							  <%= f.hidden_field :account_id, :value => params[:account_id] %>
+							  
+							  <% if params[:type] == "service" %>  
+							  <p>
+								Service:
+								<% services_array = Service.all.map { |service| [service.name, service.product_id] } %>
+								<%= options_for_select(services_array) %>
+								<%= f.select(:product_id, options_for_select(services_array), type => 'text') %>
+							  </p>
+							  <% elsif params[:type] == "drug" %>
+							  <p>
+								Drug:
+								<% drugitems_array = DrugItem.all.map { |drugitem| [drugitem.name, drugitem.product_id] } %>
+								<%= options_for_select(drugitems_array) %>
+								<%= f.select(:product_id, options_for_select(drugitems_array)) %>
+							  </p>
+							
+							  <% elsif params[:type] == "admission" %>
+							  <p>
+								Admission:
+								<%= f.hidden_field :account_id, :value => @admission.account_id %>
+								<%= f.hidden_field :product_id, :value => @admission.product_id %>
+								<%= f.hidden_field :original_price, :value => @admission.totalprice %> 
+								
+							  </p>
+							  <% else %>
+							  <p>
+								Wrong parameter for type of service!<br/>
+								You should clarify type of item and account id<br/>
+								<i>e.g, items/new?type=service&account_id=1</i>
+							
+							  </p>
+							  <% end %>	
+							  <%= f.submit 'Create' %>
+
+							</td>
+                        <tr>
+                    </table>
+				<% end %>
+
+            <div>
+         <body>
+</html>           
+
+	

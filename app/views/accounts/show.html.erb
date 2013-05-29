@@ -47,7 +47,12 @@
             </div>
             <select id="tabs">
               <!--<option value='/patients/overview?patient_id=<%= @patient.id %>'>Overview</option>-->
+              <option value='/accounts/account_info?account_id=<%= @account.id %>&show=unpaid'>Unpaid</option>
+              <option value='/accounts/account_info?account_id=<%= @account.id %>&show=paid'>Paid</option>
+              <option value='/accounts/account_info?account_id=<%= @account.id %>&show=medical_schemes'>Medical schemes</option>
               <option value='/patients/past_visits_summary?patient_id=<%= @patient.id %>'>Previous services</option>
+
+
               <!--<option value='/patients/personal/<%= @patient.id -%>'>Printouts and Other</option> -->
             </select>
             <% if @patient.person.dead == 1%>
@@ -86,6 +91,12 @@
                   <%= ((session_datetime.to_date rescue '') != '' ? "Reset Date" : "Set Date") %></option>
                 </select>
              <% end %>
+            <tr>
+              <td align='center'>
+                <input type='submit' value='Payment' />
+              </td>
+            </tr>
+             
             <tr>
               <td align='center'>
                 <input type='submit' value='Finish' />

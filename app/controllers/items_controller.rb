@@ -21,10 +21,12 @@ class ItemsController < ApplicationController
     end
   end
 
+
   # GET /items/new
   # GET /items/new.xml
   def new
     @item = Item.new
+    @department
     if params[:type] == "admission"
     	@admission = Admission.find(params[:admission])
     end
